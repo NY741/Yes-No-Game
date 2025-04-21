@@ -163,7 +163,7 @@ p,
   margin: 0 auto;
 }
 
-.hints {
+.tooltips {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
@@ -250,12 +250,12 @@ p,
   background-color: var(--light-red-color);
 }
 
-.correct-answer {
+.success {
   background-color: var(--light-green-color);
   color: var(--dark-green-color);
 }
 
-.incorrect-answer {
+.failure {
   background-color: var(--light-red-color);
   color: var(--dark-red-color);
 }
@@ -410,7 +410,7 @@ p,
 }
 
 mark {
-  color: var(--dark-grey-color);
+  color: var(--dark-blue-color);
   background-color: transparent;
 }
 

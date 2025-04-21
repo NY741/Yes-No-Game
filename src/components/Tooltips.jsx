@@ -8,7 +8,6 @@ import Tooltip from "./Tooltip";
 import SkipWordCount from "./SkipWordCount";
 
 let isPauseAllowed = true;
-let isTranslated = false;
 
 export default function Tooltips({
   isGamePaused,
@@ -18,6 +17,7 @@ export default function Tooltips({
   handleSkipWord,
   handleShowTranslation,
 }) {
+  const [isTranslated, setIsTranslated] = useState(false);
   const [isTimeAdded, setIsTimeAdded] = useState(false);
   const [skipWordCount, setSkipWordCount] = useState(3);
 
@@ -37,7 +37,7 @@ export default function Tooltips({
 
   function showTranslation() {
     handleShowTranslation(!isTranslated);
-    isTranslated = !isTranslated;
+    setIsTranslated((prev) => !prev);
   }
 
   function skipWord() {
@@ -49,7 +49,7 @@ export default function Tooltips({
   }
 
   return (
-    <div className="hints">
+    <div className="tooltips">
       <Tooltip
         url={isGamePaused ? iconPlay : iconPause}
         onClick={isGamePaused ? resumeGame : pauseGame}
@@ -58,7 +58,7 @@ export default function Tooltips({
           !isPauseAllowed && !isGamePaused
             ? "default"
             : isGamePaused
-            ? "correct-answer"
+            ? "success"
             : ""
         }
       />
@@ -72,7 +72,7 @@ export default function Tooltips({
         url={iconInfo}
         onClick={showTranslation}
         title="show translation"
-        classes={isTranslated ? "correct-answer" : ""}
+        classes={isTranslated ? "success" : ""}
       />
       <Tooltip
         url={iconCross}

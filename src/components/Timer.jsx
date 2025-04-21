@@ -38,7 +38,7 @@ export default function Timer({
   // Only once when mounted - not effective now
 
   return (
-    <div className={remainingTime === 0 ? "timer incorrect-answer" : "timer"}>
+    <div className={remainingTime === 0 ? "timer failure" : "timer"}>
       {Math.ceil(remainingTime / 1000)}
     </div>
   );
