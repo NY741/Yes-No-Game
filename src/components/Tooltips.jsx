@@ -7,8 +7,6 @@ import iconCross from "../assets/images/icon_cross.png";
 import Tooltip from "./Tooltip";
 import SkipWordCount from "./SkipWordCount";
 
-let isPauseAllowed = true;
-
 export default function Tooltips({
   isGamePaused,
   handlePauseGame,
@@ -17,6 +15,7 @@ export default function Tooltips({
   handleSkipWord,
   handleShowTranslation,
 }) {
+  const [isPauseAllowed, setIsPauseAllowed] = useState(true);
   const [isTranslated, setIsTranslated] = useState(false);
   const [isTimeAdded, setIsTimeAdded] = useState(false);
   const [skipWordCount, setSkipWordCount] = useState(3);
@@ -26,8 +25,8 @@ export default function Tooltips({
   }
 
   function resumeGame() {
-    handleResumeGame();
-    isPauseAllowed = false;
+    handleResumeGame(isPauseAllowed);
+    setIsPauseAllowed(false);
   }
 
   function addTime() {

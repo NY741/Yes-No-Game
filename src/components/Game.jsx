@@ -80,67 +80,67 @@ export default function Game({ user, level, changePlayer, restartGame }) {
     if (isPauseAllowed) setIsGamePaused(true);
   }
 
-  function resumeGame() {
+  function resumeGame(isPauseAllowed) {
     setIsGamePaused(false);
   }
 
   function checkAnswer(correct, currentWord) {
-    if (isGamePaused) resumeGame();
-    const isCorrect = currentWord.correct === correct;
 
-    if (isCorrect) {
-      mixedWords[currentNum].userAnswer = true;
-      correctNum++;
-      correctRowNum++;
-      incorrectRowNum = 0;
-      if (correctRowNum > maxCombo) maxCombo = correctRowNum;
+    if (!isGamePaused) {
+      const isCorrect = currentWord.correct === correct;
 
-      if (correctRowNum > 50) {
-        playerTotalScore = playerTotalScore + 50;
-        setLeftSeconds((prev) => prev + 3);
-      } else if (correctRowNum > 40) {
-        playerTotalScore = playerTotalScore + 40;
-        setLeftSeconds((prev) => prev + 2);
-      } else if (correctRowNum > 30) {
-        playerTotalScore = playerTotalScore + 30;
-        setLeftSeconds((prev) => prev + 2);
-      } else if (correctRowNum > 20) {
-        playerTotalScore = playerTotalScore + 20;
-        setLeftSeconds((prev) => prev + 2);
-      } else if (correctRowNum >= 10) {
-        playerTotalScore = playerTotalScore + 15;
-        setLeftSeconds((prev) => prev + 1);
+      if (isCorrect) {
+        mixedWords[currentNum].userAnswer = true;
+        correctNum++;
+        correctRowNum++;
+        incorrectRowNum = 0;
+        if (correctRowNum > maxCombo) maxCombo = correctRowNum;
+
+        if (correctRowNum > 50) {
+          playerTotalScore = playerTotalScore + 50;
+          setLeftSeconds((prev) => prev + 3);
+        } else if (correctRowNum > 40) {
+          playerTotalScore = playerTotalScore + 40;
+          setLeftSeconds((prev) => prev + 2);
+        } else if (correctRowNum > 30) {
+          playerTotalScore = playerTotalScore + 30;
+          setLeftSeconds((prev) => prev + 2);
+        } else if (correctRowNum > 20) {
+          playerTotalScore = playerTotalScore + 20;
+          setLeftSeconds((prev) => prev + 2);
+        } else if (correctRowNum >= 10) {
+          playerTotalScore = playerTotalScore + 15;
+          setLeftSeconds((prev) => prev + 1);
+        } else {
+          playerTotalScore = playerTotalScore + 10;
+        }
+
+        setDirection("increase");
       } else {
-        playerTotalScore = playerTotalScore + 10;
+        incorrectWords.push({
+          word1: mixedWords[currentNum].word1,
+          word2: mixedWords[currentNum].word2,
+          correct: mixedWords[currentNum].correct,
+          translation: mixedWords[currentNum].translation,
+          date: getDate(),
+        });
+        incorrectNum++;
+        correctRowNum = 0;
+        incorrectRowNum++;
+        setLeftSeconds((prev) => prev - 2);
+        playerTotalScore = playerTotalScore - 5;
+        setDirection("decrease");
       }
 
-      setDirection("increase");
-    } else {
-      incorrectWords.push({
-        word1: mixedWords[currentNum].word1,
-        word2: mixedWords[currentNum].word2,
-        correct: mixedWords[currentNum].correct,
-        translation: mixedWords[currentNum].translation,
-        date: getDate(),
-      });
-      incorrectNum++;
-      correctRowNum = 0;
-      incorrectRowNum++;
-      setLeftSeconds((prev) => prev - 2);
-      playerTotalScore = playerTotalScore - 5;
-      setDirection("decrease");
+      setBlinkKey((prev) => prev + 1);
+      if (playerTotalScore < 0) playerTotalScore = 0;
+      if (currentNum + 1 >= mixedWords.length) {
+        console.log("We used every possible word in the dictionary!");
+        finishGame();
+      } else {
+        setCurrentNum(currentNum + 1);
+      }
     }
-
-    if (playerTotalScore < 0) playerTotalScore = 0;
-
-    if (currentNum + 1 >= mixedWords.length) {
-      console.log("We used every possible word in the dictionary!");
-      finishGame();
-    } else {
-      setCurrentNum(currentNum + 1);
-    }
-
-    setBlinkKey((prev) => prev + 1);
   }
 
   function changeWords() {
