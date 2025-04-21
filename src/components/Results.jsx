@@ -51,7 +51,7 @@ export default function Results({
       setPopupIsDisplayed(false);
 
       return () => clearTimeout(timeout);
-    }, 800);
+    }, 1000);
   });
 
   function isWordDuplicated(word) {
@@ -218,6 +218,12 @@ export default function Results({
     setPopupIsDisplayed(true);
   }
 
+  function incorrectLengthUsed(sentence) {
+    notifWord = sentence;
+    setNotifType("incorrect-length");
+    setPopupIsDisplayed(true);
+  }
+
   return (
     <div className="game">
       {popupIsDisplayed && <PopUp type={notifType} word={notifWord}></PopUp>}
@@ -362,7 +368,9 @@ export default function Results({
             </tbody>
           </table>
         ) : (
-          <p className="special-text">There are no words to review in the game!</p>
+          <p className="special-text">
+            There are no words to review in the game!
+          </p>
         )}
 
         <ButtonsBlock classes={!dictionary.length ? null : "unmargined"}>
@@ -388,7 +396,7 @@ export default function Results({
                 <th>DATE</th>
                 <th title="Click to see the other meanings">WORD</th>
                 <th title="Hover over to see the translation">TRANSLATION</th>
-                <th title="Make a sentence/phrase using the word">WORD</th>
+                <th title="Make a sentence/phrase using the word">SENTENCE</th>
                 <th>X</th>
               </tr>
             </thead>
@@ -398,7 +406,10 @@ export default function Results({
                   <tr key={`${word.word1}-${index}`}>
                     <td>{word.date}</td>
                     <td>
-                      <a href="#" target="_blank">
+                      <a
+                        href={`https://translate.google.com/?sl=en&tl=ru&text=${dictionary[index].word1}&op=translate`}
+                        target="_blank"
+                      >
                         {word.word1}
                       </a>
                     </td>
@@ -410,9 +421,8 @@ export default function Results({
                         user={user}
                         userDataObj={userDataObj}
                         handleUpdateUser={updateUser}
-                        handleIncorrectSentenceEntered={
-                          incorrectSentenceEntered
-                        }
+                        handleIncorrectEntry={incorrectSentenceEntered}
+                        handleIncorrectLength={incorrectLengthUsed}
                       />
                     </td>
                     <td>

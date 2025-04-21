@@ -587,10 +587,14 @@ th {
   height: 20px;
 }
 
+.fallback-text {
+  font-family: "Poppins" serif;
+  color: var(--dark-grey-color);
+}
+
 .sentence-text {
   font-family: "Poppins" serif;
-  text-shadow: 1px 1px 1px var(--light-grey-color);
-  color: var(--dark-grey-color);
+  color: var(--black-color);
 }
 
 input:focus {

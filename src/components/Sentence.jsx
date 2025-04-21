@@ -5,7 +5,8 @@ export default function Sentence({
   user,
   userDataObj,
   handleUpdateUser,
-  handleIncorrectSentenceEntered
+  handleIncorrectEntry,
+  handleIncorrectLength,
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [sentenceInput, setSentenceInput] = useState(word.sentence || "");
@@ -20,20 +21,26 @@ export default function Sentence({
   }
 
   function saveSentence(word, sentence) {
-    if (checkWordUsage(word, sentence)) {
-      const i = userDataObj.dictionary.findIndex((w) => w.word1 === word.word1);
-      userDataObj.dictionary[i].sentence = sentence;
-      localStorage.setItem(user, JSON.stringify(userDataObj));
-      handleUpdateUser(userDataObj.dictionary);
-      setIsEditing(false);
-      console.log("Sentence saved");
-    } else handleIncorrectSentenceEntered(word, sentence)
+    if (checkLength(sentence)) {
+      if (checkWordUsage(word, sentence)) {
+        const i = userDataObj.dictionary.findIndex(
+          (w) => w.word1 === word.word1
+        );
+        userDataObj.dictionary[i].sentence = sentence;
+        localStorage.setItem(user, JSON.stringify(userDataObj));
+        handleUpdateUser(userDataObj.dictionary);
+        setIsEditing(false);
+        console.log("Sentence saved");
+      } else handleIncorrectEntry(word, sentence);
+    } else handleIncorrectLength(sentence);
   }
 
   function checkWordUsage(word, sentence) {
-    console.log(word);
-    console.log(sentence);
     return sentence.toLowerCase().includes(word.word1);
+  }
+
+  function checkLength(sentence) {
+    return sentence.split(" ").length > 1;
   }
 
   return isEditing ? (
@@ -45,7 +52,8 @@ export default function Sentence({
       onBlur={(e) => saveSentence(word, e.target.value)}
     />
   ) : (
-    <span className="sentence-text"
+    <span
+      className={word.sentence ? "sentence-text" : "fallback-text"}
       onClick={() => {
         setSentenceInput(word.sentence || "");
         setIsEditing(true);

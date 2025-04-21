@@ -47,7 +47,17 @@ export default function PopUp({ type, word }) {
     case "incorrect-entry":
       text = (
         <>
-          Entered sentence does not contain the word <MarkedText type="failure">{word}</MarkedText>
+          Entered sentence does not contain the word{" "}
+          <MarkedText type="failure">{word}</MarkedText>
+        </>
+      );
+      isSuccess = false;
+      break;
+    case "incorrect-length":
+      text = (
+        <>
+          Entered text <MarkedText type="failure">({word})</MarkedText> is not a
+          phrase or sentence
         </>
       );
       isSuccess = false;
