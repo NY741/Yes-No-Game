@@ -131,12 +131,16 @@ p,
 }
 
 .buttons {
-  margin: 0 auto 20px;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
 .button {
-  margin: 0 10px;
+  /* margin: 0 10px; */
   padding: 8px 16px;
   border-radius: 5px;
   border: 1px solid #000;
@@ -406,7 +410,7 @@ p,
 }
 
 mark {
-  color: var(--dark-blue-color);
+  color: var(--dark-grey-color);
   background-color: transparent;
 }
 
@@ -515,6 +519,11 @@ th {
   background-color: var(--light-red-color);
 }
 
+.skipped {
+  /* color: var(--dark-grey-color); */
+  background-color: var(--light-grey-color);
+}
+
 .review__table tr.true td:nth-child(4) {
   color: var(--dark-green-color);
 }
@@ -577,10 +586,21 @@ th {
   color: var(--dark-green-color);
 }
 
+.unmargined {
+  margin-bottom: 0;
+}
+
 .sentence {
   width: 90%;
   margin: 0 auto;
   height: 20px;
+}
+
+.sentence-text {
+  font-size: 1.1em;
+  font-family: "Poppins" serif;
+  text-shadow: 1px 1px 1px var(--light-grey-color);
+  color: var(--dark-grey-color);
 }
 
 input:focus {

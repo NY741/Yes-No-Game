@@ -1,5 +1,6 @@
+import BlinkingScore from "./BlinkingScore.jsx";
 import Timer from "./Timer.jsx";
-import Hints from "./Hints";
+import Tooltips from "./Tooltips";
 import ProgressBar from "./ProgressBar";
 import WordsBlock from "./WordsBlock";
 import Translation from "./Translation.jsx";
@@ -8,44 +9,54 @@ import ButtonsBlock from "./ButtonsBlock.jsx";
 import Button from "./Button.jsx";
 import Results from "./Results.jsx";
 import wordStock from "../wordStock.js";
-import { mixWords } from "../functions.js";
-import { useState, useEffect } from "react";
+import {
+  mixWords,
+  getDate,
+  updateSessionStorage,
+  setExistingPlayers,
+} from "../functions.js";
+import { useState } from "react";
 
-let existingPlayers = [];
-// setExistingPlayers(0);
-console.log(localStorage);
-const initTimeMap = [100, 50, 25];
-let leftSeconds = 0; // new feature
-let progressBarCurrValue = 100;
-let words = [...wordStock];
-const mixedWords = mixWords(words);
-let skipWordCount = 3;
+const initTimeMap = [30, 20, 10];
+const words = [...wordStock];
+let mixedWords = mixWords(words);
+let incorrectWords = [];
 let playerTotalScore = 0;
 let maxCombo = 0;
 let correctNum = 0;
 let correctRowNum = 0;
 let incorrectNum = 0;
 let incorrectRowNum = 0;
-let isGamePaused = false;
-let isPauseAllowed = true;
+let existingPlayers = [];
+setExistingPlayers(0, existingPlayers);
 
-export default function Game({ user, level }) {
-  const [isGameFinished, setIsGameFinished] = useState(false);
+export default function Game({ user, level, changePlayer, restartGame }) {
+  const [blinkKey, setBlinkKey] = useState(0);
+  const [direction, setDirection] = useState(null);
   const [currentNum, setCurrentNum] = useState(0);
+  const [leftSeconds, setLeftSeconds] = useState(initTimeMap[level - 1]);
+  const [progressValue, setProgressValue] = useState(100);
   const [isTranslationShowed, setIsTranslationShowed] = useState(false);
+  const [isGamePaused, setIsGamePaused] = useState(false);
+  const [isGameFinished, setIsGameFinished] = useState(false);
 
+  let currentPlayerIndex;
+  const isNewPlayer = checkNewPlayer();
 
-  // const [isTimeAdded, setTimeAdded] = useState(false);
-  // const userDataObj = JSON.parse(localStorage.getItem(user));
-  // const isNewPlayer = checkNewPlayer();
+  if (isNewPlayer) {
+    localStorage.setItem(
+      user,
+      JSON.stringify({ name: user, score: 0, dictionary: [] })
+    );
+  }
+
+  let userDataObj = JSON.parse(localStorage.getItem(user));
   const timer = initTimeMap[level - 1];
-  leftSeconds = timer;
-
-  let currentWord = {
-    word1: mixedWords[currentNum].word1,
-    word2: mixedWords[currentNum].word2,
-    correct: mixedWords[currentNum].correct,
-    translation: mixedWords[currentNum].translation,
+  let currentWord = mixedWords[currentNum] || {
+    word1: "",
+    word2: "",
+    correct: false,
+    traslation: "",
   };
 
   function checkNewPlayer() {
@@ -54,27 +65,155 @@ export default function Game({ user, level }) {
   }
 
   function addTime() {
+    const addTimeMap = [20, 15, 10];
+    // leftSeconds += addTimeMap[level - 1];
+    setLeftSeconds((prev) => prev + addTimeMap[level - 1]);
     console.log("Time added");
-    let addTimeMap = [20, 15, 10];
-    leftSeconds += addTimeMap[level - 1];
-    console.log(leftSeconds);
   }
 
-  function showTranslation() {
-    console.log("Translation showed");
-    setIsTranslationShowed(true);
+  function showTranslation(isTranslated) {
+    setIsTranslationShowed(isTranslated);
+    console.log(`Translation ${isTranslated ? "shown" : "hidden"}`);
   }
 
-  function handleSelectedAnswer(correct, currentWord) {
-    console.log(currentWord.correct === correct);
-    setCurrentNum(currentNum + 1);
+  function pauseGame(isPauseAllowed) {
+    if (isPauseAllowed) setIsGamePaused(true);
+  }
+
+  function resumeGame() {
+    setIsGamePaused(false);
+  }
+
+  function checkAnswer(correct, currentWord) {
+    if (isGamePaused) resumeGame();
+    const isCorrect = currentWord.correct === correct;
+
+    if (isCorrect) {
+      mixedWords[currentNum].userAnswer = true;
+      correctNum++;
+      correctRowNum++;
+      incorrectRowNum = 0;
+      if (correctRowNum > maxCombo) maxCombo = correctRowNum;
+
+      if (correctRowNum > 50) {
+        playerTotalScore = playerTotalScore + 50;
+        setLeftSeconds((prev) => prev + 3);
+      } else if (correctRowNum > 40) {
+        playerTotalScore = playerTotalScore + 40;
+        setLeftSeconds((prev) => prev + 2);
+      } else if (correctRowNum > 30) {
+        playerTotalScore = playerTotalScore + 30;
+        setLeftSeconds((prev) => prev + 2);
+      } else if (correctRowNum > 20) {
+        playerTotalScore = playerTotalScore + 20;
+        setLeftSeconds((prev) => prev + 2);
+      } else if (correctRowNum >= 10) {
+        playerTotalScore = playerTotalScore + 15;
+        setLeftSeconds((prev) => prev + 1);
+      } else {
+        playerTotalScore = playerTotalScore + 10;
+      }
+
+      setDirection("increase");
+    } else {
+      incorrectWords.push({
+        word1: mixedWords[currentNum].word1,
+        word2: mixedWords[currentNum].word2,
+        correct: mixedWords[currentNum].correct,
+        translation: mixedWords[currentNum].translation,
+        date: getDate(),
+      });
+      incorrectNum++;
+      correctRowNum = 0;
+      incorrectRowNum++;
+      setLeftSeconds((prev) => prev - 2);
+      playerTotalScore = playerTotalScore - 5;
+      setDirection("decrease");
+    }
+
+    if (playerTotalScore < 0) playerTotalScore = 0;
+
+    if (currentNum + 1 >= mixedWords.length) {
+      console.log("We used every possible word in the dictionary!");
+      finishGame();
+    } else {
+      setCurrentNum(currentNum + 1);
+    }
+
+    setBlinkKey((prev) => prev + 1);
+  }
+
+  function changeWords() {
+    if (currentNum + 1 >= mixedWords.length) {
+      finishGame();
+    } else {
+      setCurrentNum(currentNum + 1);
+      incorrectWords.push({
+        word1: mixedWords[currentNum].word1,
+        word2: mixedWords[currentNum].word2,
+        correct: false, // will be changed to different condition soon
+        translation: mixedWords[currentNum].translation,
+        date: getDate(),
+      });
+    }
   }
 
   function changeTime(remainingTime) {
-    remainingTime /= 1000;
-    // console.log(remainingTime)
-    progressBarCurrValue = (remainingTime / timer) * 100;
-    console.log(progressBarCurrValue);
+    if (remainingTime >= 0) {
+      // check if this demanded !
+      setProgressValue((remainingTime / 1000 / timer) * 100);
+    }
+  }
+
+  function updateBestResults(isNew, user, currentScore) {
+    console.log(user, "is", isNew ? "a New Player" : "an Existing Player");
+
+    if (isNew) {
+      const newUserDataObj = {
+        name: user,
+        score: currentScore,
+        dictionary: [],
+      };
+      localStorage.setItem(user, JSON.stringify(newUserDataObj));
+      existingPlayers.push({ name: user, score: currentScore });
+    } else {
+      const previousScore = userDataObj.score;
+      if (currentScore > previousScore) {
+        console.log("it works");
+        userDataObj.score = currentScore;
+        localStorage.setItem(user, JSON.stringify(userDataObj));
+        setExistingPlayers(1, existingPlayers, user, currentScore);
+      }
+    }
+
+    existingPlayers.sort((a, b) => b.score - a.score);
+  }
+
+  function finishGame() {
+    console.log(currentPlayerIndex);
+    updateSessionStorage(user, playerTotalScore);
+    updateBestResults(isNewPlayer, user, playerTotalScore);
+    setIsGameFinished(true);
+    console.log("Game is finished");
+  }
+
+  function restartGame() {
+    mixedWords = mixWords(words);
+    incorrectWords = [];
+    playerTotalScore = 0;
+    maxCombo = 0;
+    correctNum = 0;
+    correctRowNum = 0;
+    incorrectNum = 0;
+    incorrectRowNum = 0;
+    setBlinkKey(0);
+    setDirection(null);
+    setCurrentNum(0);
+    setLeftSeconds(initTimeMap[level - 1]);
+    setProgressValue(100);
+    setIsTranslationShowed(false);
+    setIsGamePaused(false);
+    setIsGameFinished(false);
   }
 
   return (
@@ -82,19 +221,43 @@ export default function Game({ user, level }) {
       {isGameFinished ? (
         <Results
           user={user}
+          userDataObj={userDataObj}
           totalScore={playerTotalScore}
           correctNum={correctNum}
           incorrectNum={incorrectNum}
           maxCombo={maxCombo}
+          gameWords={mixedWords}
+          incorrectWords={incorrectWords}
+          wordsNum={currentNum}
+          existingPlayers={existingPlayers}
+          currentPlayerIndex={currentPlayerIndex}
+          handleChangePlayer={changePlayer}
+          handleRestartGame={restartGame}
         />
       ) : (
         <>
-          <Timer time={leftSeconds} handleTimeChange={changeTime} />
-          <Hints
-            handleShowTranslationHint={showTranslation}
-            handleAddTimeHint={addTime}
+          {direction && (
+            <BlinkingScore
+              key={blinkKey}
+              direction={direction}
+              rowNum={correctRowNum || incorrectRowNum}
+            />
+          )}
+          <Timer
+            time={leftSeconds}
+            isGamePaused={isGamePaused}
+            handleTimeChange={changeTime}
+            handleFinishGame={finishGame}
           />
-          <ProgressBar currValue={progressBarCurrValue} maxValue={100} />
+          <Tooltips
+            isGamePaused={isGamePaused}
+            handlePauseGame={pauseGame}
+            handleResumeGame={resumeGame}
+            handleAddTime={addTime}
+            handleShowTranslation={showTranslation}
+            handleSkipWord={changeWords}
+          />
+          <ProgressBar currValue={progressValue} maxValue={100} />
           <WordsBlock word1={currentWord.word1} word2={currentWord.word2} />
           {isTranslationShowed ? <Translation word={currentWord} /> : null}
           <Scores score={playerTotalScore} />
@@ -102,12 +265,12 @@ export default function Game({ user, level }) {
             <Button
               text="Yes"
               classes="true-button"
-              onClick={() => handleSelectedAnswer(true, currentWord)}
+              onClick={() => checkAnswer(true, currentWord)}
             />
             <Button
               text="No"
               classes="false-button"
-              onClick={() => handleSelectedAnswer(false, currentWord)}
+              onClick={() => checkAnswer(false, currentWord)}
             />
           </ButtonsBlock>
         </>

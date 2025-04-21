@@ -54,7 +54,7 @@ export default function Description({ handleStartGame }) {
           <label>Type your name: </label>
           <input
             ref={userName}
-            defaultValue="Yusif"
+            defaultValue=""
             type="text"
             id="username"
             placeholder="Username"
@@ -67,7 +67,7 @@ export default function Description({ handleStartGame }) {
             ref={gameLevel}
             name="level"
             id="level"
-            defaultValue="2"
+            defaultValue="3"
             required
           >
             <option value="1">Low</option>
@@ -80,7 +80,7 @@ export default function Description({ handleStartGame }) {
         text="Start Game"
         classes="block-button"
         onClick={() =>
-          handleStartGame(userName.current.value, gameLevel.current.value)
+          handleStartGame(userName.current.value.trim(), gameLevel.current.value)
         }
       />
     </section>

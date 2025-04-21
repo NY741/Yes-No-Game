@@ -1,32 +1,3 @@
-// FUNCTION - LAUNCH APP
-export function launchApp() {
-  startBtn.addEventListener("click", function () {
-    startGame(userName.value, level.value);
-  });
-}
-
-// FUNCTION - START / RESTART GAME
-export function startGame(userName, level) {
-  console.log("Game started");
-  userName = userName.trim();
-  level = +level;
-  if (!userName) return;
-  showHideBlocks();
-  createGame(userName, level);
-}
-
-// FUNCTION - SHOW HIDE BLOCKS
-export function showHideBlocks() {
-  description.classList.toggle("hidden");
-  game.classList.toggle("hidden");
-}
-
-// FUNCTION - CHANGE PLAYER
-export function changePlayer() {
-  clearGame();
-  showHideBlocks();
-}
-
 // FUNCTION - MIX WORDS
 export function mixWords(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -34,15 +5,6 @@ export function mixWords(array) {
     [array[i], array[j]] = [array[j], array[i]];
   }
   return array;
-}
-
-// FUNCTION - CLEAR GAME
-export function clearGame() {
-  if (game.innerHTML) {
-    game.classList.remove("danger");
-    game.innerHTML = "";
-    review.innerHTML = "";
-  }
 }
 
 // FUNCTION - GET DATE
@@ -61,8 +23,23 @@ export function getDate() {
   return text;
 }
 
+// FUNCTION - UPDATE SESSION STORAGE
+export function updateSessionStorage(user, playerScore) {
+  let objStr = JSON.stringify({ name: user, score: playerScore });
+  if (sessionStorage.getItem("sessionBestScore")) {
+    let best = +JSON.parse(sessionStorage.getItem("sessionBestScore")).score;
+    if (playerScore > best) sessionStorage.setItem("sessionBestScore", objStr);
+  } else sessionStorage.setItem("sessionBestScore", objStr);
+  console.log(sessionStorage);
+}
+
 // FUNCTION - SET EXISTING PLAYERS
-export function setExistingPlayers(times, currentPlayer, playerTotalScore) {
+export function setExistingPlayers(
+  times,
+  existingPlayers,
+  currentPlayer,
+  playerTotalScore
+) {
   if (times == 0) {
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
@@ -75,53 +52,14 @@ export function setExistingPlayers(times, currentPlayer, playerTotalScore) {
   } else if (times == 1) {
     let i = existingPlayers.findIndex((p) => p.name == currentPlayer);
     console.log(i);
-    existingPlayers[i] = {
-      name: currentPlayer,
-      score: playerTotalScore,
-    };
-  }
-
-  console.log("Existing players have been set");
-  console.log(existingPlayers);
-}
-
-// FUNCTION - UPDATE SESSION STORAGE
-export function updateSessionStorage(user, playerScore) {
-  let objStr = JSON.stringify({ name: user, score: playerScore });
-  if (sessionStorage.getItem("sessionBestScore")) {
-    let best = +JSON.parse(sessionStorage.getItem("sessionBestScore")).score;
-    if (playerScore > best) sessionStorage.setItem("sessionBestScore", objStr);
-  } else sessionStorage.setItem("sessionBestScore", objStr);
-}
-
-// FUNCTION - CREATE WARNING TEXT
-export function createWarningText(block, text) {
-  const infoText = document.createElement("p");
-  infoText.className = "special-text failure-text";
-  infoText.innerText = text;
-  block.append(infoText);
-}
-
-// FUNCTION - UPDATE BEST RESULTS
-export function updateBestResults(isNew, user, currentScore, userDataObj) {
-  console.log(user, "is", isNew ? "a New Player" : "an Existing Player");
-
-  if (isNew) {
-    const newUserDataObj = {
-      name: user,
-      score: currentScore,
-      dictionary: [],
-    };
-    localStorage.setItem(user, JSON.stringify(newUserDataObj));
-    existingPlayers.push({ name: user, score: currentScore });
-  } else {
-    const previousScore = userDataObj.score;
-    if (currentScore > previousScore) {
-      userDataObj.score = currentScore;
-      localStorage.setItem(user, JSON.stringify(userDataObj));
-      setExistingPlayers(1, user, currentScore);
+    if (playerTotalScore > existingPlayers[i].score) {
+      existingPlayers[i] = {
+        name: currentPlayer,
+        score: playerTotalScore,
+      };
     }
   }
+  console.log("Existing players have been set");
 }
 
 // FUNCTION - GET ARRAY OF WORDS ONLY
@@ -132,11 +70,11 @@ export function getArrayOfWordsOnly(arr) {
 }
 
 // FUNCTION - ADD CLASSES
-export function addClasses(classes) {
-  let className = "button";
+export function addClasses(main, classes) {
+  let className = main;
   if (classes) {
     if (classes.includes(" ")) {
-      let arr = classes.split("");
+      let arr = classes.split(" ");
       for (let item of arr) {
         className += ` ${item}`;
       }

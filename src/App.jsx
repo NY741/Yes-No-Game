@@ -1,27 +1,54 @@
-import { useState } from "react";
+import { useState, createPortal } from "react";
 import Description from "./components/Description";
 import Game from "./components/Game";
 
-let gameLevel = 0;
-let userName = null;
+for (let i = 0; i < localStorage.length; i++) {
+  const key = localStorage.key(i);
+  const value = localStorage.getItem(key);
+  console.log(`${key}: ${value}`);
+}
 
 function App() {
-  const [isGameActive, setIsGameActive] = useState(true);
-  // console.log(isGameActive);
+  const [gameLevel, setGameLevel] = useState(0);
+  const [userName, setUserName] = useState(null);
+  const [isGameActive, setIsGameActive] = useState(false);
 
-  // function startGame(username, level) {
-  //   setIsGameActive(true);
-  //   console.log("Game started");
-  //   gameLevel = level;
-  //   userName = username;
-  // }
+  function startGame(username, level) {
+    setUserName(username);
+    setGameLevel(level);
+    if (username) {
+      setIsGameActive(true);
+      console.log("Game started");
+    } else return;
+  }
+
+  function changePlayer() {
+    console.log("Change player called");
+    setIsGameActive(false);
+  }
 
   return (
     <div id="container">
-      {/* {!isGameActive && <Description handleStartGame={startGame} />} */}
-      {isGameActive && <Game user={userName} level={1} />}
+      {!isGameActive && <Description handleStartGame={startGame} />}
+      {isGameActive && (
+        <Game user={userName} level={gameLevel} changePlayer={changePlayer} />
+      )}
     </div>
   );
 }
 
 export default App;
+
+// let existingPlayers = [
+//   { name: "Rauf", score: 215 },
+//   { name: "Qosha", score: 270 },
+//   { name: "Elmir", score: 135 },
+//   { name: "Aqil", score: 360 },
+//   { name: "Elvin", score: 295 },
+//   { name: "Orkhan", score: 155 },
+//   { name: "Ismayil", score: 80 },
+//   { name: "Elchin", score: 135 },
+//   { name: "Yusif", score: 585 },
+//   { name: "Kenan", score: 370 },
+//   { name: "Chingiz", score: 305 },
+// ];
