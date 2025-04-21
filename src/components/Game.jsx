@@ -264,12 +264,12 @@ export default function Game({ user, level, changePlayer, restartGame }) {
           <ButtonsBlock>
             <Button
               text="Yes"
-              classes="true-button"
+              classes="success-button"
               onClick={() => checkAnswer(true, currentWord)}
             />
             <Button
               text="No"
-              classes="false-button"
+              classes="failure-button"
               onClick={() => checkAnswer(false, currentWord)}
             />
           </ButtonsBlock>

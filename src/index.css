@@ -140,7 +140,6 @@ p,
 }
 
 .button {
-  /* margin: 0 10px; */
   padding: 8px 16px;
   border-radius: 5px;
   border: 1px solid #000;
@@ -183,7 +182,6 @@ p,
 
 .image-button:hover {
   background-color: var(--dark-yellow-color);
-  box-shadow: 0 0 5px #000;
   opacity: 1;
 }
 
@@ -290,23 +288,19 @@ p,
   color: var(--dark-blue-color);
 }
 
-.true-button,
-.false-button {
+.success-button,
+.failure-button {
   background-color: var(--light-blue-color);
   min-width: 125px;
 }
 
-.true-button {
-  margin-right: 15px;
-}
-
-.false-button:hover {
+.failure-button:hover {
   background-color: var(--dark-red-color);
 }
 
-.disabled:hover {
+/* .disabled:hover {
   background-color: var(--light-blue-color);
-}
+} */
 
 .show-more-button {
   display: block;
@@ -354,17 +348,13 @@ p,
   border-radius: 50%;
 }
 
-.default {
+.default,
+.default:hover {
   color: #484848;
   border-color: #333;
   background-color: var(--dark-grey-color);
   opacity: 0.6;
   cursor: default;
-}
-
-.default:hover {
-  background-color: var(--light-grey-color);
-  box-shadow: none;
 }
 
 .translated-word {
@@ -554,6 +544,7 @@ th {
 }
 
 .dictionary {
+  font-family: "Poppins", "Calibri", serif;
   margin-bottom: 0;
 }
 
@@ -563,7 +554,7 @@ th {
 
 .dictionary td,
 .sentence {
-  font-size: 14px;
+  font-size: 0.9em;
 }
 
 .dictionary td a,
@@ -571,12 +562,12 @@ th {
 .dictionary td:nth-of-type(3) {
   font-size: 0.9em;
   font-weight: 600;
-  font-family: "Poppins", "Calibri", serif;
   text-transform: uppercase;
   color: var(--navy-color);
 }
 
 .dictionary td:nth-of-type(3) {
+  font-size: 0.8em;
   opacity: 0.02;
 }
 
@@ -597,7 +588,6 @@ th {
 }
 
 .sentence-text {
-  font-size: 1.1em;
   font-family: "Poppins" serif;
   text-shadow: 1px 1px 1px var(--light-grey-color);
   color: var(--dark-grey-color);

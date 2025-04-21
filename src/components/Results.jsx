@@ -225,12 +225,12 @@ export default function Results({
       <ButtonsBlock classes={dictionaryDisplayed ? null : "unmargined"}>
         <Button
           text="Change Player"
-          classes="false-button"
+          classes="failure-button"
           onClick={handleChangePlayer}
         />
         <Button
           text="Restart Game"
-          classes="true-button"
+          classes="success-button"
           onClick={handleRestartGame}
         />
       </ButtonsBlock>
@@ -343,13 +343,11 @@ export default function Results({
                   <tr
                     key={`${word.word1}-${index}`}
                     className={word.userAnswer ? "true" : "false"}
-                    // className={!word.userAnswer ? (word.userAnswer === false ? "false" : "skipped") : 'true'}
                   >
                     <td>{word.word1}</td>
                     <td>{word.word2}</td>
                     <td>{word.correct ? "true" : "false"}</td>
                     <td>{word.userAnswer ? "correct" : "incorrect"}</td>
-                    {/* <td>{!word.userAnswer ? (word.userAnswer === false ? "incorrect" : "skipped") : 'correct'}</td> */}
 
                     <td>
                       <Button
@@ -364,21 +362,21 @@ export default function Results({
             </tbody>
           </table>
         ) : (
-          <p className="special-text">No words left to review in the game!</p>
+          <p className="special-text">There are no words to review in the game!</p>
         )}
 
         <ButtonsBlock classes={!dictionary.length ? null : "unmargined"}>
           {dictionary.length ? (
             <Button
               text={dictionaryDisplayed ? "Hide Dictionary" : "Show Dictionary"}
-              classes="button show-dictionary-button"
+              classes="button success-button"
               onClick={dictionaryDisplayed ? hideDictionary : showDictionary}
             />
           ) : null}
           {reviewWords.length && incorrectWords.length && !allIncorrectAdded ? (
             <Button
               text="Add All Incorrect Words"
-              classes="button false-button add-all-incorrect-button"
+              classes="button"
               onClick={addIncorrectWordsToDictionary}
             />
           ) : null}

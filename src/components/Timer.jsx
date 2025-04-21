@@ -22,8 +22,7 @@ export default function Timer({
         setRemainingTime((prev) => {
           const updated = prev - 1000;
           handleTimeChange(updated);
-          if (updated < 0) {
-            // changed from <=0 to <0
+          if (updated <= 0) {
             clearInterval(intervalRef.current);
             handleFinishGame();
             return 0;
