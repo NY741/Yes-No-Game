@@ -376,14 +376,14 @@ export default function Results({
           {dictionary.length ? (
             <Button
               text={dictionaryDisplayed ? "Hide Dictionary" : "Show Dictionary"}
-              classes="button success-button"
+              // classes="success-button"
               onClick={dictionaryDisplayed ? hideDictionary : showDictionary}
             />
           ) : null}
           {reviewWords.length && incorrectWords.length && !allIncorrectAdded ? (
             <Button
               text="Add All Incorrect Words"
-              classes="button"
+              // classes="failure-button"
               onClick={addIncorrectWordsToDictionary}
             />
           ) : null}
