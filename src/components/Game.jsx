@@ -15,7 +15,7 @@ import {
   updateSessionStorage,
   setExistingPlayers,
 } from "../functions.js";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const initTimeMap = [30, 20, 10];
 const words = [...wordStock];
@@ -39,6 +39,15 @@ export default function Game({ user, level, changePlayer, restartGame }) {
   const [isTranslationShowed, setIsTranslationShowed] = useState(false);
   const [isGamePaused, setIsGamePaused] = useState(false);
   const [isGameFinished, setIsGameFinished] = useState(false);
+  const [isDangerStyled, setIsDangerStyled] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isGameFinished) setIsDangerStyled(false);
+
+      return () => clearTimeout(timeout);
+    }, 5000);
+  }, [isDangerStyled]);
 
   let currentPlayerIndex;
   const isNewPlayer = checkNewPlayer();
@@ -197,6 +206,7 @@ export default function Game({ user, level, changePlayer, restartGame }) {
     updateSessionStorage(user, playerTotalScore);
     updateBestResults(isNewPlayer, user, playerTotalScore);
     setIsGameFinished(true);
+    setIsDangerStyled(true);
     console.log("Game is finished");
   }
 
@@ -220,7 +230,7 @@ export default function Game({ user, level, changePlayer, restartGame }) {
   }
 
   return (
-    <main className="game">
+    <main className={isDangerStyled ? "game danger" : "game"}>
       {isGameFinished ? (
         <Results
           user={user}
