@@ -571,6 +571,10 @@ th {
   opacity: 0.02;
 }
 
+.dictionary th:nth-of-type(4) {
+min-width: 160px;
+}
+
 .dictionary td a:hover,
 .dictionary td:nth-of-type(3):hover {
   opacity: 1;
@@ -595,6 +599,10 @@ th {
 .sentence-text {
   font-family: "Poppins" serif;
   color: var(--black-color);
+}
+
+.sentence-text:hover {
+  color: var(--dark-green-color)
 }
 
 input:focus {
