@@ -108,7 +108,6 @@ export default function Results({
 
   function showMoreScores() {
     let rows = Array.from(document.querySelectorAll(".scores__table tbody tr"));
-    // for (let row of rows) row.classList.remove("hidden");
     for (let i = 0; i < 10; i++) {
       rows[i]?.classList.remove("hidden");
     }

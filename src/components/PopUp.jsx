@@ -56,7 +56,7 @@ export default function PopUp({ type, word }) {
     case "incorrect-length":
       text = (
         <>
-          Entered text <MarkedText type="failure">({word})</MarkedText> is not a
+          Entered text - <MarkedText type="failure">{word}</MarkedText> - is not a
           phrase or sentence
         </>
       );

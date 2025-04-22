@@ -11,7 +11,7 @@ export default function BlinkingScore({ direction, rowNum }) {
       return () => clearTimeout(timeout);
     }, []);
 
-  console.log(direction, rowNum);
+  // console.log(direction, rowNum);
   return (
     displayed && (
       <div
