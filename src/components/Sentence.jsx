@@ -26,13 +26,22 @@ export default function Sentence({
         const i = userDataObj.dictionary.findIndex(
           (w) => w.word1 === word.word1
         );
+        sentence = sentence.trim().toLowerCase();
         userDataObj.dictionary[i].sentence = sentence;
         localStorage.setItem(user, JSON.stringify(userDataObj));
         handleUpdateUser(userDataObj.dictionary);
         setIsEditing(false);
         console.log("Sentence saved");
-      } else handleIncorrectEntry(word, sentence);
-    } else handleIncorrectLength(sentence);
+      } else {
+        handleIncorrectEntry(word, sentence);
+        setSentenceInput("");
+        setIsEditing(false);
+      }
+    } else {
+      handleIncorrectLength(sentence);
+      setSentenceInput("");
+      setIsEditing(false);
+    }
   }
 
   function checkWordUsage(word, sentence) {
@@ -40,7 +49,7 @@ export default function Sentence({
   }
 
   function checkLength(sentence) {
-    return sentence.split(" ").length > 1;
+    return sentence.trim().split(" ").length > 1;
   }
 
   return isEditing ? (
