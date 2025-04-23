@@ -11,9 +11,6 @@ export default function Sentence({
   const [isEditing, setIsEditing] = useState(false);
   const [sentenceInput, setSentenceInput] = useState(word.sentence || "");
 
-  console.log(word);
-  console.log(userDataObj);
-
   function handleEditKeyDown(e) {
     if (e.key === "Enter") {
       saveSentence(word, e.target.value);

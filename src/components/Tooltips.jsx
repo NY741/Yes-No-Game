@@ -68,7 +68,6 @@ export default function Tooltips({
       className="tooltips"
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      // onClick={onClick}
     >
       <Tooltip
         url={isGamePaused ? iconPlay : iconPause}

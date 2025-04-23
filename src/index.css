@@ -9,7 +9,8 @@
   --dark-green-color: #0a8;
   --special-green-color: #afb;
   --light-blue-color: #eef;
-  --dark-blue-color: #08a;
+  /* --dark-blue-color: #08a; */
+  --dark-blue-color: #2d68c4;
   --special-blue-color: #66f;
   --light-grey-color: #eee;
   --dark-grey-color: #666;
@@ -572,7 +573,7 @@ th {
 }
 
 .dictionary th:nth-of-type(4) {
-min-width: 160px;
+  min-width: 160px;
 }
 
 .dictionary td a:hover,
@@ -602,7 +603,7 @@ min-width: 160px;
 }
 
 .sentence-text:hover {
-  color: var(--dark-green-color)
+  color: var(--dark-green-color);
 }
 
 input:focus {

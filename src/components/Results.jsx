@@ -154,6 +154,7 @@ export default function Results({
     let iWords = getArrayOfWordsOnly(incorrectWords);
     let dWords = getArrayOfWordsOnly(dictionary);
 
+    const currentDictionary = [...dictionary];
     const newWordsToAdd = [];
     const updatedReviewWords = [...reviewWords];
 
@@ -167,6 +168,7 @@ export default function Results({
             word2: word.word2,
             translation: word.translation,
             date: getDate(),
+            sentence: "",
           };
 
           newWordsToAdd.push(newWord);
@@ -177,7 +179,10 @@ export default function Results({
       }
     });
 
-    const updatedDictionary = [...dictionary, ...newWordsToAdd];
+    const updatedDictionary = [...currentDictionary, ...newWordsToAdd];
+
+    userDataObj.dictionary = updatedDictionary;
+    localStorage.setItem(user, JSON.stringify(userDataObj));
     setDictionary(updatedDictionary);
     setReviewWords(updatedReviewWords);
     setAllIncorrectAdded(true);
