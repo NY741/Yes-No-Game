@@ -36,6 +36,8 @@ export default function Results({
     initialReversedSortState
   );
 
+  console.log(dictionary);
+
   currentPlayerIndex = existingPlayers.findIndex((p) => p.name === user);
   let best = JSON.parse(sessionStorage.getItem("sessionBestScore"));
   setExistingPlayers(1, existingPlayers, user, totalScore);

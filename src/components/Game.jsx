@@ -18,6 +18,7 @@ import {
 import { useState, useEffect } from "react";
 
 const initTimeMap = [30, 20, 10];
+// const initTimeMap = [60, 45, 30];
 const words = [...wordStock];
 let mixedWords = mixWords(words);
 let incorrectWords = [];

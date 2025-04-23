@@ -27,6 +27,8 @@ export default function Sentence({
           (w) => w.word1 === word.word1
         );
         sentence = sentence.trim().toLowerCase();
+        console.log(i);
+        console.log(userDataObj.dictionary[i]);
         userDataObj.dictionary[i].sentence = sentence;
         localStorage.setItem(user, JSON.stringify(userDataObj));
         handleUpdateUser(userDataObj.dictionary);

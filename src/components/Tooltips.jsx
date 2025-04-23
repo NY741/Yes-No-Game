@@ -47,7 +47,7 @@ export default function Tooltips({
   }
 
   function addTime() {
-    handleAddTime();
+    if (!isTimeAdded) handleAddTime();
     setIsTimeAdded(true);
   }
 
