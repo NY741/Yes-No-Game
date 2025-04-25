@@ -458,11 +458,11 @@ th {
   background-color: var(--dark-green-color);
 }
 
-.scores__table th.ascending-order:hover::before {
+th.ascending-order:hover::before {
   content: "▼ ";
 }
 
-.scores__table th.descending-order:hover::before {
+th.descending-order:hover::before {
   content: "▲ ";
 }
 
@@ -523,13 +523,18 @@ th {
   color: var(--dark-red-color);
 }
 
+.review__table th {
+  font-size: 0.9em;
+}
+
 .review__table td {
   border-right: 1px dashed #000;
   overflow: hidden;
   opacity: 0.8;
 }
 
-.review__table td:hover {
+.review__table th:hover,
+.dictionary td:hover {
   opacity: 1;
   cursor: pointer;
 }
@@ -572,8 +577,9 @@ th {
   opacity: 0.02;
 }
 
+.dictionary th:nth-of-type(1),
 .dictionary th:nth-of-type(4) {
-  min-width: 160px;
+  min-width: 120px;
 }
 
 .dictionary td a:hover,
@@ -618,6 +624,7 @@ input.danger:focus {
   margin: 0;
   padding: 5px 10px;
   border: 2px solid var(--light-grey-color);
+  border-radius: 0;
   font: 900 13px Verdana, Geneva, Tahoma, sans-serif;
   text-align: center;
   color: #fff;

@@ -41,12 +41,9 @@ export default function Results({
   currentPlayerIndex = existingPlayers.findIndex((p) => p.name === user);
   let best = JSON.parse(sessionStorage.getItem("sessionBestScore"));
   setExistingPlayers(1, existingPlayers, user, totalScore);
-  // console.log(best);
-  // console.log(userDataObj);
-  // console.log(incorrectWords);
-  // console.log(dictionary);
-  // console.log(existingPlayers);
-  // console.log(currentPlayerIndex);
+  const scoresTable = useRef();
+  const reviewTable = useRef();
+  const dictTable = useRef();
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -61,9 +58,8 @@ export default function Results({
     return dictWords.includes(word);
   }
 
-  function sortColumn(index, reverse) {
+  function sortColumn(index, reverse, table) {
     let rows, switching, i, x, y, shouldSwitch;
-    let table = document.querySelector(".scores__table");
     switching = true;
     while (switching) {
       switching = false;
@@ -274,6 +270,7 @@ export default function Results({
       <div className="scores">
         <h2 className="scores__header">Top Best Scores</h2>
         <table
+          ref={scoresTable}
           className={`scores__table${
             existingPlayers.length <= 10 ? " unmargined" : ""
           }`}
@@ -282,7 +279,9 @@ export default function Results({
             <tr>
               <th
                 className="number"
-                onClick={() => sortColumn(0, isReversedSort)}
+                onClick={() =>
+                  sortColumn(0, isReversedSort, scoresTable.current)
+                }
               >
                 #
               </th>
@@ -290,7 +289,9 @@ export default function Results({
                 className={
                   isReversedSort ? "descending-order" : "ascending-order"
                 }
-                onClick={() => sortColumn(1, isReversedSort)}
+                onClick={() =>
+                  sortColumn(1, isReversedSort, scoresTable.current)
+                }
               >
                 PLAYER
               </th>
@@ -298,7 +299,9 @@ export default function Results({
                 className={
                   isReversedSort ? "descending-order" : "ascending-order"
                 }
-                onClick={() => sortColumn(2, isReversedSort)}
+                onClick={() =>
+                  sortColumn(2, isReversedSort, scoresTable.current)
+                }
               >
                 SCORE
               </th>
@@ -342,10 +345,30 @@ export default function Results({
           <table className="review__table">
             <thead>
               <tr>
-                <th>DATE</th>
-                <th title="Click to see the other meanings">WORD</th>
-                <th title="Hover over to see the translation">TRANSLATION</th>
-                <th title="Make a sentence/phrase using the word">SENTENCE</th>
+                <th
+                  title="First word to compare"
+                  className={
+                    isReversedSort ? "descending-order" : "ascending-order"
+                  }
+                  onClick={() =>
+                    sortColumn(1, isReversedSort, reviewTable.current)
+                  }
+                >
+                  WORD1
+                </th>
+                <th
+                  title="Second word to compare"
+                  className={
+                    isReversedSort ? "descending-order" : "ascending-order"
+                  }
+                  onClick={() =>
+                    sortColumn(1, isReversedSort, reviewTable.current)
+                  }
+                >
+                  WORD2
+                </th>
+                <th title="Correct answer">CORRECT ANSWER</th>
+                <th title="Player answer">ANSWER IS</th>
                 <th>X</th>
               </tr>
             </thead>
@@ -383,66 +406,87 @@ export default function Results({
           {dictionary.length ? (
             <Button
               text={dictionaryDisplayed ? "Hide Dictionary" : "Show Dictionary"}
-              // classes="success-button"
               onClick={dictionaryDisplayed ? hideDictionary : showDictionary}
             />
           ) : null}
           {reviewWords.length && incorrectWords.length && !allIncorrectAdded ? (
             <Button
               text="Add All Incorrect Words"
-              // classes="failure-button"
               onClick={addIncorrectWordsToDictionary}
             />
           ) : null}
         </ButtonsBlock>
         {dictionary.length && dictionaryDisplayed ? (
-          <table className="review__table dictionary">
-            <thead>
-              <tr>
-                <th>DATE</th>
-                <th title="Click to see the other meanings">WORD</th>
-                <th title="Hover over to see the translation">TRANSLATION</th>
-                <th title="Make a sentence/phrase using the word">SENTENCE</th>
-                <th>X</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dictionary.map((word, index) => {
-                return (
-                  <tr key={`${word.word1}-${index}`}>
-                    <td>{word.date}</td>
-                    <td>
-                      <a
-                        href={`https://translate.google.com/?sl=en&tl=ru&text=${dictionary[index].word1}&op=translate`}
-                        target="_blank"
-                      >
-                        {word.word1}
-                      </a>
-                    </td>
-                    <td>{word.translation}</td>
+          <>
+            <table ref={dictTable} className="review__table dictionary">
+              <thead>
+                <tr>
+                  <th
+                    className={
+                      isReversedSort ? "descending-order" : "ascending-order"
+                    }
+                    onClick={() =>
+                      sortColumn(0, isReversedSort, dictTable.current)
+                    }
+                  >
+                    DATE
+                  </th>
+                  <th
+                    title="Click to see the other meanings"
+                    className={
+                      isReversedSort ? "descending-order" : "ascending-order"
+                    }
+                    onClick={() =>
+                      sortColumn(1, isReversedSort, dictTable.current)
+                    }
+                  >
+                    WORD
+                  </th>
+                  <th title="Hover over to see the translation">TRANSLATION</th>
+                  <th title="Make a sentence/phrase using the word">
+                    SENTENCE
+                  </th>
+                  <th>X</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dictionary.map((word, index) => {
+                  return (
+                    <tr key={`${word.word1}-${index}`}>
+                      <td>{word.date}</td>
+                      <td>
+                        <a
+                          href={`https://translate.google.com/?sl=en&tl=ru&text=${dictionary[index].word1}&op=translate`}
+                          target="_blank"
+                        >
+                          {word.word1}
+                        </a>
+                      </td>
+                      <td>{word.translation}</td>
 
-                    <td>
-                      <Sentence
-                        word={word}
-                        user={user}
-                        userDataObj={userDataObj}
-                        handleUpdateUser={updateUser}
-                        handleIncorrectEntry={incorrectSentenceEntered}
-                        handleIncorrectLength={incorrectLengthUsed}
-                      />
-                    </td>
-                    <td>
-                      <Button
-                        text="x"
-                        classes="action-button remove-word"
-                        onClick={() => removeWordFromDictionary(word, index)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      <td>
+                        <Sentence
+                          word={word}
+                          user={user}
+                          userDataObj={userDataObj}
+                          handleUpdateUser={updateUser}
+                          handleIncorrectEntry={incorrectSentenceEntered}
+                          handleIncorrectLength={incorrectLengthUsed}
+                        />
+                      </td>
+                      <td>
+                        <Button
+                          text="x"
+                          classes="action-button remove-word"
+                          onClick={() => removeWordFromDictionary(word, index)}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </>
         ) : null}
         {!dictionary.length ? (
           <p className="special-text failure-text unmargined">
@@ -453,6 +497,13 @@ export default function Results({
     </div>
   );
 }
+
+// console.log(best);
+// console.log(userDataObj);
+// console.log(incorrectWords);
+// console.log(dictionary);
+// console.log(existingPlayers);
+// console.log(currentPlayerIndex);
 
 // let allIncorrect = getArrayOfWordsOnly(incorrectWords);
 // let allDictionary = getArrayOfWordsOnly(dictionary);
