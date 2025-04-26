@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from "react";
 
 let initialReversedSortState = false;
 let notifWord;
+let notifType;
 
 export default function Results({
   user,
@@ -23,8 +24,7 @@ export default function Results({
   handleChangePlayer,
   handleRestartGame,
 }) {
-  const [popupIsDisplayed, setPopupIsDisplayed] = useState(false);
-  const [notifType, setNotifType] = useState(null);
+  const [isPopupDisplayed, setIsPopupDisplayed] = useState(false);
   const [reviewWords, setReviewWords] = useState(gameWords.slice(0, wordsNum));
   const [dictionaryDisplayed, setDictionaryDisplayed] = useState(false);
   const [isLearnedDisplayed, setIsLearnedDisplayed] = useState(true);
@@ -48,8 +48,7 @@ export default function Results({
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setPopupIsDisplayed(false);
-
+      setIsPopupDisplayed(false);
       return () => clearTimeout(timeout);
     }, 1000);
   });
@@ -117,9 +116,7 @@ export default function Results({
 
   function addWordToDictionary(word, index) {
     if (isWordDuplicated(word.word1)) {
-      notifWord = word.word1;
-      setNotifType("duplicate");
-      setPopupIsDisplayed(true);
+      showPopupNotification(word.word1, "duplicate");
       console.log("Word " + word.word1 + " is duplicated!");
       return;
     }
@@ -142,9 +139,7 @@ export default function Results({
     setDictionary(updatedDictionary);
     userDataObj.dictionary = updatedDictionary;
     localStorage.setItem(user, JSON.stringify(userDataObj));
-    notifWord = word.word1;
-    setNotifType("add");
-    setPopupIsDisplayed(true);
+    showPopupNotification(word.word1, "add");
     console.log("Word added to dictionary");
   }
 
@@ -185,8 +180,7 @@ export default function Results({
     setDictionary(updatedDictionary);
     setReviewWords(updatedReviewWords);
     setAllIncorrectAdded(true);
-    setNotifType("add-incorrect");
-    setPopupIsDisplayed(true);
+    showPopupNotification("All incorrect words", "add-incorrect");
     console.log("All incorrect words added to dictionary");
   }
 
@@ -196,36 +190,18 @@ export default function Results({
     setDictionary(newDictionary);
     userDataObj.dictionary = newDictionary;
     localStorage.setItem(user, JSON.stringify(userDataObj));
-    notifWord = word.word1;
-    setNotifType("learn");
-    setPopupIsDisplayed(true);
+    showPopupNotification(word.word1, "learn");
     console.log("Word marked as learned");
   }
 
   function showLearnedWords() {
     setIsLearnedDisplayed(true);
+    console.log("Learned words are displayed");
   }
 
   function hideLearnedWords() {
-    // let newDictionary = [...dictionary];
-    // let updatedDictionary = [];
-    // for (let word of newDictionary) {
-    //   if (!word.learned) {
-    //     updatedDictionary.push(
-    //       word
-    //       // word1: word.word1,
-    //       // word2: word.word2,
-    //       // translation: word.translation,
-    //       // learned: word.learned,
-    //       // sentence: word.sentence,
-    //       // date: getDate(),
-    //     );
-    //   }
-    // }
-    // userDataObj.dictionary = updatedDictionary;
-    // localStorage.setItem(user, JSON.stringify(userDataObj));
-    // setDictionary(updatedDictionary);
     setIsLearnedDisplayed(false);
+    console.log("Learned words are hidden");
   }
 
   function removeWordFromDictionary(word, index) {
@@ -234,9 +210,7 @@ export default function Results({
     setDictionary(newDictionary);
     userDataObj.dictionary = newDictionary;
     localStorage.setItem(user, JSON.stringify(userDataObj));
-    notifWord = word.word1;
-    setNotifType("remove");
-    setPopupIsDisplayed(true);
+    showPopupNotification(word.word1, "remove");
     console.log("Word removed from dictionary");
   }
 
@@ -255,21 +229,24 @@ export default function Results({
     });
   }
 
-  function incorrectSentenceEntered(word, sentence) {
-    notifWord = word.word1;
-    setNotifType("incorrect-entry");
-    setPopupIsDisplayed(true);
+  function incorrectSentenceEntered(word) {
+    showPopupNotification(word, "incorrect-entry");
   }
 
-  function incorrectLengthUsed(sentence) {
-    notifWord = sentence;
-    setNotifType("incorrect-length");
-    setPopupIsDisplayed(true);
+  function incorrectLengthUsed(word) {
+    showPopupNotification(word, "incorrect-length");
+  }
+
+  function showPopupNotification(word, type) {
+    notifWord = word;
+    // setNotifType(type);
+    notifType = type;
+    setIsPopupDisplayed(true);
   }
 
   return (
     <div className="game">
-      {popupIsDisplayed && <PopUp type={notifType} word={notifWord}></PopUp>}
+      {isPopupDisplayed && <PopUp type={notifType} word={notifWord}></PopUp>}
       <p className="timeout">Time is up! Try again.</p>
       <ButtonsBlock classes={dictionaryDisplayed ? null : "unmargined"}>
         <Button
@@ -498,46 +475,48 @@ export default function Results({
               </thead>
               <tbody>
                 {dictionary.map((word, index) => {
-                  return isLearnedDisplayed || !word.isLearned ? (<tr
-                    key={`${word.word1}-${index}`}
-                    className={word.isLearned ? "learned-word" : undefined}
-                  >
-                    <td>{word.date}</td>
-                    <td>
-                      <a
-                        href={`https://translate.google.com/?sl=en&tl=ru&text=${dictionary[index].word1}&op=translate`}
-                        target="_blank"
-                      >
-                        {word.word1}
-                      </a>
-                    </td>
-                    <td>{word.translation}</td>
-                    <td>
-                      <Sentence
-                        word={word}
-                        user={user}
-                        userDataObj={userDataObj}
-                        handleUpdateUser={updateUser}
-                        handleIncorrectEntry={incorrectSentenceEntered}
-                        handleIncorrectLength={incorrectLengthUsed}
-                      />
-                    </td>
-                    <td>
-                      <Button
-                        text="✔"
-                        classes="action-button add-word"
-                        onClick={() => markWordAsLearnt(word, index)}
-                      />
-                    </td>
-                    <td>
-                      <Button
-                        text="x"
-                        classes="action-button remove-word"
-                        onClick={() => removeWordFromDictionary(word, index)}
-                      />
-                    </td>
-                  </tr>) : null})
-                }
+                  return isLearnedDisplayed || !word.isLearned ? (
+                    <tr
+                      key={`${word.word1}-${index}`}
+                      className={word.isLearned ? "learned-word" : undefined}
+                    >
+                      <td>{word.date}</td>
+                      <td>
+                        <a
+                          href={`https://translate.google.com/?sl=en&tl=ru&text=${dictionary[index].word1}&op=translate`}
+                          target="_blank"
+                        >
+                          {word.word1}
+                        </a>
+                      </td>
+                      <td>{word.translation}</td>
+                      <td>
+                        <Sentence
+                          word={word}
+                          user={user}
+                          userDataObj={userDataObj}
+                          handleUpdateUser={updateUser}
+                          handleIncorrectEntry={incorrectSentenceEntered}
+                          handleIncorrectLength={incorrectLengthUsed}
+                        />
+                      </td>
+                      <td>
+                        <Button
+                          text="✔"
+                          classes="action-button add-word"
+                          onClick={() => markWordAsLearnt(word, index)}
+                        />
+                      </td>
+                      <td>
+                        <Button
+                          text="x"
+                          classes="action-button remove-word"
+                          onClick={() => removeWordFromDictionary(word, index)}
+                        />
+                      </td>
+                    </tr>
+                  ) : null;
+                })}
               </tbody>
             </table>
           </>

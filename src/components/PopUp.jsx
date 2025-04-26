@@ -1,88 +1,80 @@
-// import { useEffect, useState } from "react";
 import MarkedText from "./MarkedText";
 
 export default function PopUp({ type, word }) {
   let text;
   let isSuccess;
-  console.log(type);
-  console.log(word);
 
   switch (type) {
     case "add":
+      isSuccess = true;
       text = (
         <>
-          The word <MarkedText type="success">{word}</MarkedText> added to the
+          The word <MarkedText type={isSuccess}>{word}</MarkedText> added to the
           dictionary
         </>
       );
-      isSuccess = true;
       break;
     case "add-incorrect":
+      isSuccess = true;
       text = (
         <>
-          <MarkedText type="success">All incorrect</MarkedText> words are added
-          to the dictionary
+          <MarkedText type={isSuccess}>{word}</MarkedText> are added to the
+          dictionary
         </>
       );
-      isSuccess = true;
       break;
     case "remove":
+      isSuccess = false;
       text = (
         <>
-          The word <MarkedText type="failure">{word}</MarkedText> removed from
+          The word <MarkedText type={isSuccess}>{word}</MarkedText> removed from
           the dictionary
         </>
       );
-      isSuccess = false;
       break;
     case "learn":
+      isSuccess = false;
       text = (
         <>
-          The word <MarkedText type="success">{word}</MarkedText> marked as
+          The word <MarkedText type={isSuccess}>{word}</MarkedText> marked as
           learned
         </>
       );
-      isSuccess = false;
       break;
     case "duplicate":
+      isSuccess = false;
       text = (
         <>
-          The word <MarkedText type="failure">{word}</MarkedText> already exists
-          in the dictionary
+          The word <MarkedText type={isSuccess}>{word}</MarkedText> already
+          exists in the dictionary
         </>
       );
-      isSuccess = false;
       break;
     case "incorrect-entry":
+      isSuccess = false;
       text = (
         <>
           Entered sentence does not contain the word{" "}
-          <MarkedText type="failure">{word}</MarkedText>
+          <MarkedText type={isSuccess}>{word}</MarkedText>
         </>
       );
-      isSuccess = false;
       break;
     case "incorrect-length":
+      isSuccess = false;
       text = (
         <>
-          Entered text - <MarkedText type="failure">{word}</MarkedText> - is not
-          a phrase or sentence
+          Entered text - <MarkedText type={isSuccess}>{word}</MarkedText> - is
+          not a phrase or sentence
         </>
       );
-      isSuccess = false;
       break;
-
     default:
       break;
   }
 
   return (
     <div className="pop-up">
-      <p
-        className={
-          isSuccess ? "pop-up__text success-text" : "pop-up__text failure-text"
-        }
-      >
+      <p className={`pop-up__text ${isSuccess ? "success" : "failure"}-text`}>
         {text}
       </p>
     </div>

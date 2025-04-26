@@ -25,6 +25,10 @@
   text-decoration: none;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   /* background-image: url("./images/alphabet1.jpeg"); */
   background-color: var(--dark-blue-color);

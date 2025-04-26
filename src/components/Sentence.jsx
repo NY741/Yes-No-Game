@@ -32,7 +32,7 @@ export default function Sentence({
         setIsEditing(false);
         console.log("Sentence saved");
       } else {
-        handleIncorrectEntry(word, sentence);
+        handleIncorrectEntry(word.word1);
         setSentenceInput("");
         setIsEditing(false);
       }
