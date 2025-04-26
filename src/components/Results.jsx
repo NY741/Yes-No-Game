@@ -5,7 +5,7 @@ import Sentence from "./Sentence";
 import { setExistingPlayers, getDate, getArrayOfWordsOnly } from "../functions";
 import { useState, useEffect, useRef } from "react";
 
-let initialReversedSortState = false;
+let initSortState = false;
 let notifWord;
 let notifType;
 
@@ -24,24 +24,21 @@ export default function Results({
   handleChangePlayer,
   handleRestartGame,
 }) {
+  const [isPlayersDisplayed, setIsPlayersDisplayed] = useState(false);
   const [isPopupDisplayed, setIsPopupDisplayed] = useState(false);
-  const [reviewWords, setReviewWords] = useState(gameWords.slice(0, wordsNum));
-  const [dictionaryDisplayed, setDictionaryDisplayed] = useState(false);
+  const [isDictionaryDisplayed, setIsDictionaryDisplayed] = useState(false);
   const [isLearnedDisplayed, setIsLearnedDisplayed] = useState(true);
+  const [isReversedSort, setIsReversedSort] = useState(initSortState);
   const [allIncorrectAdded, setAllIncorrectAdded] = useState(false);
+  const [reviewWords, setReviewWords] = useState(gameWords.slice(0, wordsNum));
   const [dictionary, setDictionary] = useState(
     [...userDataObj?.dictionary] || []
   );
-  const [playersDisplayed, setPlayersDisplayed] = useState(false);
-  const [isReversedSort, setIsReversedSort] = useState(
-    initialReversedSortState
-  );
-
-  console.log(dictionary);
 
   currentPlayerIndex = existingPlayers.findIndex((p) => p.name === user);
   let best = JSON.parse(sessionStorage.getItem("sessionBestScore"));
   setExistingPlayers(1, existingPlayers, user, totalScore);
+
   const scoresTable = useRef();
   const reviewTable = useRef();
   const dictTable = useRef();
@@ -110,7 +107,7 @@ export default function Results({
       rows[i]?.classList.remove("hidden");
     }
     document.querySelector(".scores__table").classList.add("unmargined");
-    setPlayersDisplayed(true);
+    setIsPlayersDisplayed(true);
     console.log("Top 10 players showed");
   }
 
@@ -215,11 +212,11 @@ export default function Results({
   }
 
   function hideDictionary() {
-    setDictionaryDisplayed(false);
+    setIsDictionaryDisplayed(false);
   }
 
   function showDictionary() {
-    setDictionaryDisplayed(true);
+    setIsDictionaryDisplayed(true);
   }
 
   function updateUser(dictionary) {
@@ -239,7 +236,6 @@ export default function Results({
 
   function showPopupNotification(word, type) {
     notifWord = word;
-    // setNotifType(type);
     notifType = type;
     setIsPopupDisplayed(true);
   }
@@ -248,7 +244,7 @@ export default function Results({
     <div className="game">
       {isPopupDisplayed && <PopUp type={notifType} word={notifWord}></PopUp>}
       <p className="timeout">Time is up! Try again.</p>
-      <ButtonsBlock classes={dictionaryDisplayed ? null : "unmargined"}>
+      <ButtonsBlock classes={isDictionaryDisplayed ? null : "unmargined"}>
         <Button
           text="Change Player"
           classes="failure-button"
@@ -350,7 +346,7 @@ export default function Results({
         <Button
           text="Show More Players"
           classes={
-            playersDisplayed || existingPlayers.length <= 10
+            isPlayersDisplayed || existingPlayers.length <= 10
               ? "hidden"
               : "show-more-button"
           }
@@ -422,11 +418,13 @@ export default function Results({
         <ButtonsBlock classes={!dictionary.length ? null : "unmargined"}>
           {dictionary.length ? (
             <Button
-              text={dictionaryDisplayed ? "Hide Dictionary" : "Show Dictionary"}
-              onClick={dictionaryDisplayed ? hideDictionary : showDictionary}
+              text={
+                isDictionaryDisplayed ? "Hide Dictionary" : "Show Dictionary"
+              }
+              onClick={isDictionaryDisplayed ? hideDictionary : showDictionary}
             />
           ) : null}
-          {dictionaryDisplayed ? (
+          {isDictionaryDisplayed ? (
             <Button
               text={isLearnedDisplayed ? "Hide Learned" : "Show Learned"}
               onClick={isLearnedDisplayed ? hideLearnedWords : showLearnedWords}
@@ -439,7 +437,7 @@ export default function Results({
             />
           ) : null}
         </ButtonsBlock>
-        {dictionary.length && dictionaryDisplayed ? (
+        {dictionary.length && isDictionaryDisplayed ? (
           <>
             <table ref={dictTable} className="review__table dictionary">
               <thead>
@@ -537,32 +535,3 @@ export default function Results({
 // console.log(dictionary);
 // console.log(existingPlayers);
 // console.log(currentPlayerIndex);
-
-// let allIncorrect = getArrayOfWordsOnly(incorrectWords);
-// let allDictionary = getArrayOfWordsOnly(dictionary);
-// console.log(allIncorrect);
-// console.log(allDictionary);
-// for (let incorrectWord of allIncorrect) {
-//   if (allDictionary.includes(incorrectWord)) continue;
-//   const word = reviewWords.find((w) => w.word1 === incorrectWord);
-//   console.log(word);
-//   const i = reviewWords.findIndex((word) => word.word1 === incorrectWord);
-//   console.log(i);
-
-//   const newWord = {
-//     word1: word.word1,
-//     word2: word.word2,
-//     translation: word.translation,
-//     date: getDate(),
-//   };
-
-//   const updatedDictionary = [...dictionary, newWord];
-//   userDataObj.dictionary = updatedDictionary;
-//   localStorage.setItem(user, JSON.stringify(userDataObj));
-//   setDictionary(updatedDictionary);
-//   setReviewWords((prev) => {
-//     const leftWords = [...prev];
-//     leftWords.splice([i], 1);
-//     return leftWords;
-//   });
-// }

@@ -32,9 +32,9 @@ let existingPlayers = [];
 setExistingPlayers(0, existingPlayers);
 
 export default function Game({ user, level, changePlayer, restartGame }) {
+  const [currentNum, setCurrentNum] = useState(0);
   const [blinkKey, setBlinkKey] = useState(0);
   const [direction, setDirection] = useState(null);
-  const [currentNum, setCurrentNum] = useState(0);
   const [leftSeconds, setLeftSeconds] = useState(initTimeMap[level - 1]);
   const [progressValue, setProgressValue] = useState(100);
   const [isTranslationShowed, setIsTranslationShowed] = useState(false);

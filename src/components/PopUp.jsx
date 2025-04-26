@@ -33,7 +33,7 @@ export default function PopUp({ type, word }) {
       );
       break;
     case "learn":
-      isSuccess = false;
+      isSuccess = true;
       text = (
         <>
           The word <MarkedText type={isSuccess}>{word}</MarkedText> marked as
