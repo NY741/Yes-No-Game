@@ -35,6 +35,15 @@ export default function PopUp({ type, word }) {
       );
       isSuccess = false;
       break;
+    case "learn":
+      text = (
+        <>
+          The word <MarkedText type="success">{word}</MarkedText> marked as
+          learned
+        </>
+      );
+      isSuccess = false;
+      break;
     case "duplicate":
       text = (
         <>
@@ -56,8 +65,8 @@ export default function PopUp({ type, word }) {
     case "incorrect-length":
       text = (
         <>
-          Entered text - <MarkedText type="failure">{word}</MarkedText> - is not a
-          phrase or sentence
+          Entered text - <MarkedText type="failure">{word}</MarkedText> - is not
+          a phrase or sentence
         </>
       );
       isSuccess = false;

@@ -555,7 +555,7 @@ th.descending-order:hover::before {
 }
 
 .dictionary tbody tr:nth-of-type(2n) {
-  background-color: var(--light-grey-color);
+  /* background-color: var(--light-grey-color); */
 }
 
 .dictionary td,
@@ -588,8 +588,10 @@ th.descending-order:hover::before {
   color: var(--dark-green-color);
 }
 
-.unmargined {
-  margin-bottom: 0;
+.learned-word {
+  color: var(--dark-grey-color);
+  background-color: var(--light-green-color);
+  opacity: 0.7;
 }
 
 .sentence {
@@ -677,4 +679,8 @@ input.danger:focus {
 
 .failure-text {
   color: var(--special-red-color);
+}
+
+.unmargined {
+  margin-bottom: 0;
 }

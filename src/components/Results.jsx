@@ -27,6 +27,7 @@ export default function Results({
   const [notifType, setNotifType] = useState(null);
   const [reviewWords, setReviewWords] = useState(gameWords.slice(0, wordsNum));
   const [dictionaryDisplayed, setDictionaryDisplayed] = useState(false);
+  const [isLearnedDisplayed, setIsLearnedDisplayed] = useState(true);
   const [allIncorrectAdded, setAllIncorrectAdded] = useState(false);
   const [dictionary, setDictionary] = useState(
     [...userDataObj?.dictionary] || []
@@ -133,6 +134,7 @@ export default function Results({
       word1: word.word1,
       word2: word.word2,
       translation: word.translation,
+      learned: word.learned,
       date: getDate(),
     };
 
@@ -163,8 +165,9 @@ export default function Results({
             word1: word.word1,
             word2: word.word2,
             translation: word.translation,
-            date: getDate(),
+            learned: word.learned,
             sentence: "",
+            date: getDate(),
           };
 
           newWordsToAdd.push(newWord);
@@ -185,6 +188,44 @@ export default function Results({
     setNotifType("add-incorrect");
     setPopupIsDisplayed(true);
     console.log("All incorrect words added to dictionary");
+  }
+
+  function markWordAsLearnt(word, index) {
+    const newDictionary = [...dictionary];
+    newDictionary[index].isLearned = true;
+    setDictionary(newDictionary);
+    userDataObj.dictionary = newDictionary;
+    localStorage.setItem(user, JSON.stringify(userDataObj));
+    notifWord = word.word1;
+    setNotifType("learn");
+    setPopupIsDisplayed(true);
+    console.log("Word marked as learned");
+  }
+
+  function showLearnedWords() {
+    setIsLearnedDisplayed(true);
+  }
+
+  function hideLearnedWords() {
+    // let newDictionary = [...dictionary];
+    // let updatedDictionary = [];
+    // for (let word of newDictionary) {
+    //   if (!word.learned) {
+    //     updatedDictionary.push(
+    //       word
+    //       // word1: word.word1,
+    //       // word2: word.word2,
+    //       // translation: word.translation,
+    //       // learned: word.learned,
+    //       // sentence: word.sentence,
+    //       // date: getDate(),
+    //     );
+    //   }
+    // }
+    // userDataObj.dictionary = updatedDictionary;
+    // localStorage.setItem(user, JSON.stringify(userDataObj));
+    // setDictionary(updatedDictionary);
+    setIsLearnedDisplayed(false);
   }
 
   function removeWordFromDictionary(word, index) {
@@ -342,7 +383,7 @@ export default function Results({
       <div className="review">
         <h2 className="review__header">Review Mentioned Words</h2>
         {reviewWords.length ? (
-          <table className="review__table">
+          <table ref={reviewTable} className="review__table">
             <thead>
               <tr>
                 <th
@@ -351,7 +392,7 @@ export default function Results({
                     isReversedSort ? "descending-order" : "ascending-order"
                   }
                   onClick={() =>
-                    sortColumn(1, isReversedSort, reviewTable.current)
+                    sortColumn(0, isReversedSort, reviewTable.current)
                   }
                 >
                   WORD1
@@ -369,7 +410,7 @@ export default function Results({
                 </th>
                 <th title="Correct answer">CORRECT ANSWER</th>
                 <th title="Player answer">ANSWER IS</th>
-                <th>X</th>
+                <th>+</th>
               </tr>
             </thead>
             <tbody>
@@ -383,7 +424,6 @@ export default function Results({
                     <td>{word.word2}</td>
                     <td>{word.correct ? "true" : "false"}</td>
                     <td>{word.userAnswer ? "correct" : "incorrect"}</td>
-
                     <td>
                       <Button
                         text="+"
@@ -407,6 +447,12 @@ export default function Results({
             <Button
               text={dictionaryDisplayed ? "Hide Dictionary" : "Show Dictionary"}
               onClick={dictionaryDisplayed ? hideDictionary : showDictionary}
+            />
+          ) : null}
+          {dictionaryDisplayed ? (
+            <Button
+              text={isLearnedDisplayed ? "Hide Learned" : "Show Learned"}
+              onClick={isLearnedDisplayed ? hideLearnedWords : showLearnedWords}
             />
           ) : null}
           {reviewWords.length && incorrectWords.length && !allIncorrectAdded ? (
@@ -446,44 +492,52 @@ export default function Results({
                   <th title="Make a sentence/phrase using the word">
                     SENTENCE
                   </th>
-                  <th>X</th>
+                  <th title="List word as learnt">✔</th>
+                  <th title="Remove word from dictionary">X</th>
                 </tr>
               </thead>
               <tbody>
                 {dictionary.map((word, index) => {
-                  return (
-                    <tr key={`${word.word1}-${index}`}>
-                      <td>{word.date}</td>
-                      <td>
-                        <a
-                          href={`https://translate.google.com/?sl=en&tl=ru&text=${dictionary[index].word1}&op=translate`}
-                          target="_blank"
-                        >
-                          {word.word1}
-                        </a>
-                      </td>
-                      <td>{word.translation}</td>
-
-                      <td>
-                        <Sentence
-                          word={word}
-                          user={user}
-                          userDataObj={userDataObj}
-                          handleUpdateUser={updateUser}
-                          handleIncorrectEntry={incorrectSentenceEntered}
-                          handleIncorrectLength={incorrectLengthUsed}
-                        />
-                      </td>
-                      <td>
-                        <Button
-                          text="x"
-                          classes="action-button remove-word"
-                          onClick={() => removeWordFromDictionary(word, index)}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
+                  return isLearnedDisplayed || !word.isLearned ? (<tr
+                    key={`${word.word1}-${index}`}
+                    className={word.isLearned ? "learned-word" : undefined}
+                  >
+                    <td>{word.date}</td>
+                    <td>
+                      <a
+                        href={`https://translate.google.com/?sl=en&tl=ru&text=${dictionary[index].word1}&op=translate`}
+                        target="_blank"
+                      >
+                        {word.word1}
+                      </a>
+                    </td>
+                    <td>{word.translation}</td>
+                    <td>
+                      <Sentence
+                        word={word}
+                        user={user}
+                        userDataObj={userDataObj}
+                        handleUpdateUser={updateUser}
+                        handleIncorrectEntry={incorrectSentenceEntered}
+                        handleIncorrectLength={incorrectLengthUsed}
+                      />
+                    </td>
+                    <td>
+                      <Button
+                        text="✔"
+                        classes="action-button add-word"
+                        onClick={() => markWordAsLearnt(word, index)}
+                      />
+                    </td>
+                    <td>
+                      <Button
+                        text="x"
+                        classes="action-button remove-word"
+                        onClick={() => removeWordFromDictionary(word, index)}
+                      />
+                    </td>
+                  </tr>) : null})
+                }
               </tbody>
             </table>
           </>
