@@ -36,6 +36,9 @@ export default function Results({
   );
 
   currentPlayerIndex = existingPlayers.findIndex((p) => p.name === user);
+  const playedWordsCount = gameWords.slice(0, wordsNum).length;
+  let learnedWordsCount = getLearnedWordsCount();
+  const correctWordsCount = playedWordsCount - incorrectWords.length;
   let best = JSON.parse(sessionStorage.getItem("sessionBestScore"));
   setExistingPlayers(1, existingPlayers, user, totalScore);
 
@@ -49,6 +52,13 @@ export default function Results({
       return () => clearTimeout(timeout);
     }, 1000);
   });
+
+  function getLearnedWordsCount() {
+    let count = 0;
+    const dictionary = userDataObj.dictionary;
+    for (let word of dictionary) if (word.isLearned) count++;
+    return count;
+  }
 
   function isWordDuplicated(word) {
     let dictWords = getArrayOfWordsOnly(dictionary);
@@ -381,7 +391,7 @@ export default function Results({
                 >
                   WORD2
                 </th>
-                <th title="Correct answer">CORRECT ANSWER</th>
+                <th title="Correct answer">IS CORRECT ?</th>
                 <th title="Player answer">ANSWER IS</th>
                 <th>+</th>
               </tr>
@@ -414,6 +424,11 @@ export default function Results({
             There are no words to review in the game!
           </p>
         )}
+        <p className="special-text black-white">
+          Played pair-words count: <mark>{playedWordsCount}</mark>&nbsp;
+          Correct: <mark className="success">{correctWordsCount}</mark>&nbsp; Incorrect:{" "}
+          <mark className="failure">{incorrectWords.length}</mark>
+        </p>
 
         <ButtonsBlock classes={!dictionary.length ? null : "unmargined"}>
           {dictionary.length ? (
@@ -424,7 +439,7 @@ export default function Results({
               onClick={isDictionaryDisplayed ? hideDictionary : showDictionary}
             />
           ) : null}
-          {isDictionaryDisplayed ? (
+          {dictionary.length && isDictionaryDisplayed ? (
             <Button
               text={isLearnedDisplayed ? "Hide Learned" : "Show Learned"}
               onClick={isLearnedDisplayed ? hideLearnedWords : showLearnedWords}
@@ -530,10 +545,13 @@ export default function Results({
           </>
         ) : null}
         {!dictionary.length ? (
-          <p className="special-text failure-text unmargined">
+          <p className="special-text failure-text">
             Dictionary is empty!
           </p>
         ) : null}
+        <p className="special-text unmargined">
+          Learned words count: <mark>{learnedWordsCount}</mark>
+        </p>
       </div>
     </div>
   );

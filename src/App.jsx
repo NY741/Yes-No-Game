@@ -22,7 +22,7 @@ function App() {
     } else return;
   }
 
-  function changePlayer() {
+  function returnToHomePage() {
     console.log("Change player called");
     setIsGameActive(false);
   }
@@ -31,7 +31,13 @@ function App() {
     <div id="container">
       {!isGameActive && <Description handleStartGame={startGame} />}
       {isGameActive && (
-        <Game user={userName} level={gameLevel} changePlayer={changePlayer} />
+        <Game
+          user={userName}
+          level={gameLevel}
+          handleReturnToHomePage={
+            returnToHomePage
+          }
+        />
       )}
     </div>
   );

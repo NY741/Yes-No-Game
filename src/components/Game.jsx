@@ -31,7 +31,13 @@ let incorrectRowNum = 0;
 let existingPlayers = [];
 setExistingPlayers(0, existingPlayers);
 
-export default function Game({ user, level, changePlayer, restartGame }) {
+export default function Game({
+  user,
+  level,
+  changePlayer,
+  restartGame,
+  handleReturnToHomePage,
+}) {
   const [currentNum, setCurrentNum] = useState(0);
   const [blinkKey, setBlinkKey] = useState(0);
   const [direction, setDirection] = useState(null);
@@ -153,7 +159,6 @@ export default function Game({ user, level, changePlayer, restartGame }) {
     } else {
       setCurrentNum(currentNum + 1);
     }
-    // }
   }
 
   function changeWords() {
@@ -211,7 +216,7 @@ export default function Game({ user, level, changePlayer, restartGame }) {
     console.log("Game is finished");
   }
 
-  function restartGame() {
+  function resetValues() {
     mixedWords = mixWords(words);
     incorrectWords = [];
     playerTotalScore = 0;
@@ -220,6 +225,10 @@ export default function Game({ user, level, changePlayer, restartGame }) {
     correctRowNum = 0;
     incorrectNum = 0;
     incorrectRowNum = 0;
+  }
+
+  function restartGame() {
+    resetValues();
     setBlinkKey(0);
     setDirection(null);
     setCurrentNum(0);
@@ -228,6 +237,11 @@ export default function Game({ user, level, changePlayer, restartGame }) {
     setIsTranslationShowed(false);
     setIsGamePaused(false);
     setIsGameFinished(false);
+  }
+
+  function changePlayer() {
+    resetValues();
+    handleReturnToHomePage();
   }
 
   return (

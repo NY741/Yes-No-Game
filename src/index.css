@@ -395,8 +395,14 @@ p,
 }
 
 .special-text {
+  margin-top: 20px;
   text-align: center;
   color: var(--dark-green-color);
+}
+
+.black-white {
+  color: var(--dark-grey-color);
+  background-color: var(--white-color);
 }
 
 .mark-word {
@@ -550,14 +556,13 @@ th.descending-order:hover::before {
 }
 
 .review__table td:nth-of-type(5),
-.review__table td:nth-of-type(6)
- {
+.review__table td:nth-of-type(6) {
   padding: 0;
 }
 
 .dictionary {
   font-family: "Poppins", "Calibri", serif;
-  margin-bottom: 0;
+  /* margin-bottom: 0; */
 }
 
 .dictionary tbody tr:nth-of-type(2n) {

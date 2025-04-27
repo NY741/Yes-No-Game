@@ -72,7 +72,7 @@ export default function PopUp({ type, word }) {
       isSuccess = false;
       text = (
         <>
-          Entered text - <MarkedText type={isSuccess}>{word}</MarkedText> - is
+          Entered text <MarkedText type={isSuccess}>"{word}"</MarkedText> is
           not a phrase or sentence
         </>
       );
