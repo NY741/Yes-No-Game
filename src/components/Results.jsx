@@ -181,14 +181,14 @@ export default function Results({
     console.log("All incorrect words added to dictionary");
   }
 
-  function markWordAsLearnt(word, index) {
+  function markWordAsLearnt(word, index, isLearned) {
     const newDictionary = [...dictionary];
-    newDictionary[index].isLearned = true;
+    newDictionary[index].isLearned = !isLearned;
     setDictionary(newDictionary);
     userDataObj.dictionary = newDictionary;
     localStorage.setItem(user, JSON.stringify(userDataObj));
-    showPopupNotification(word.word1, "learn");
-    console.log("Word marked as learned");
+    showPopupNotification(word.word1, isLearned ? "forget" : "learn");
+    console.log(`Word ${isLearned ? "un" : ""}marked as learned`);
   }
 
   function showLearnedWords() {
@@ -397,7 +397,7 @@ export default function Results({
                     <td>{word.word2}</td>
                     <td>{word.correct ? "true" : "false"}</td>
                     <td>{word.userAnswer ? "correct" : "incorrect"}</td>
-                    <td>
+                    <td title="Add word to dictionary">
                       <Button
                         text="+"
                         classes="action-button add-word"
@@ -498,14 +498,24 @@ export default function Results({
                           handleIncorrectLength={incorrectLengthUsed}
                         />
                       </td>
-                      <td>
+                      <td
+                        title={
+                          word.isLearned
+                            ? "Unmark as learned"
+                            : "Mark as learned"
+                        }
+                      >
                         <Button
-                          text="✔"
-                          classes="action-button add-word"
-                          onClick={() => markWordAsLearnt(word, index)}
+                          text={word.isLearned ? "x" : "✔"}
+                          classes={`action-button ${
+                            word.isLearned ? "unmark" : "add"
+                          }-word`}
+                          onClick={() =>
+                            markWordAsLearnt(word, index, word.isLearned)
+                          }
                         />
                       </td>
-                      <td>
+                      <td title="Remove word from dictionary">
                         <Button
                           text="x"
                           classes="action-button remove-word"

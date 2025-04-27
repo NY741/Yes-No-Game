@@ -41,6 +41,15 @@ export default function PopUp({ type, word }) {
         </>
       );
       break;
+    case "forget":
+      isSuccess = false;
+      text = (
+        <>
+          The word <MarkedText type={isSuccess}>{word}</MarkedText> unmarked as
+          learned
+        </>
+      );
+      break;
     case "duplicate":
       isSuccess = false;
       text = (

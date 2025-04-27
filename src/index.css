@@ -149,7 +149,7 @@ p,
   border-radius: 5px;
   border: 1px solid #000;
   cursor: pointer;
-  font-size: 12pt;
+  font-size: 14px;
   font-weight: 700;
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
     "Lucida Sans", Arial, sans-serif;
@@ -549,7 +549,9 @@ th.descending-order:hover::before {
   padding: 5px;
 }
 
-.review__table td:last-of-type {
+.review__table td:nth-of-type(5),
+.review__table td:nth-of-type(6)
+ {
   padding: 0;
 }
 
@@ -641,6 +643,10 @@ input.danger:focus {
 }
 
 .action-button.remove-word {
+  background-color: var(--special-red-color);
+}
+
+.action-button.unmark-word {
   background-color: var(--dark-yellow-color);
 }
 

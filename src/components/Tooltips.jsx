@@ -30,8 +30,8 @@ export default function Tooltips({
     e.preventDefault();
 
     if (e.key === "Enter") isGamePaused ? resumeGame() : pauseGame();
-    if (e.code === "Space") showTranslation();
     if (e.code.includes("Shift")) addTime();
+    if (e.code === "Space") showTranslation();
     if (e.code === "Escape") skipWord();
     if (e.code === "ArrowLeft") handleArrowStroke(true);
     if (e.code === "ArrowRight") handleArrowStroke(false);
