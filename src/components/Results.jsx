@@ -365,6 +365,11 @@ export default function Results({
       </div>
       <div className="review">
         <h2 className="review__header">Review Mentioned Words</h2>
+        <p className="special-text black-white">
+          Played pair-words count: <mark>{playedWordsCount}</mark>&nbsp;
+          Correct: <mark className="success">{correctWordsCount}</mark>&nbsp; Incorrect:{" "}
+          <mark className="failure">{incorrectWords.length}</mark>
+        </p>
         {reviewWords.length ? (
           <table ref={reviewTable} className="review__table">
             <thead>
@@ -391,7 +396,7 @@ export default function Results({
                 >
                   WORD2
                 </th>
-                <th title="Correct answer">IS CORRECT ?</th>
+                <th title="Correct answer">IS CORRECT?</th>
                 <th title="Player answer">ANSWER IS</th>
                 <th>+</th>
               </tr>
@@ -424,11 +429,6 @@ export default function Results({
             There are no words to review in the game!
           </p>
         )}
-        <p className="special-text black-white">
-          Played pair-words count: <mark>{playedWordsCount}</mark>&nbsp;
-          Correct: <mark className="success">{correctWordsCount}</mark>&nbsp; Incorrect:{" "}
-          <mark className="failure">{incorrectWords.length}</mark>
-        </p>
 
         <ButtonsBlock classes={!dictionary.length ? null : "unmargined"}>
           {dictionary.length ? (

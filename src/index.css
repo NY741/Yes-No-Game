@@ -401,6 +401,8 @@ p,
 }
 
 .black-white {
+  /* border: none;
+  box-shadow: none; */
   color: var(--dark-grey-color);
   background-color: var(--white-color);
 }
@@ -423,6 +425,37 @@ th {
   font: 900 16px "Courier New", Courier, monospace;
   text-align: center;
   background-color: var(--light-blue-color);
+}
+
+.manual-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 998;
+}
+
+.result-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 900;
+  width: 50%;
+  min-width: 300px;
+  height: 240px;
+  padding: 2rem;
+  border: 1px solid var(--dark-grey-color);
+  border-radius: 8px;
+  text-align: center;
+  background-color: var(--dark-blue-color);
+  transform: translate(-50%, -50%);
+}
+
+.result-modal[open] {
+  animation: slide-in-from-top 0.35s ease-out;
+}
+
+.result-modal::backdrop {
+  background: rgba(0, 0, 0, 0.9);
 }
 
 .scores {
@@ -688,12 +721,16 @@ input.danger:focus {
   background-color: #fff;
 }
 
+.white-text {
+  color: var(--white-color);
+}
+
 .success-text {
   color: var(--dark-green-color);
 }
 
 .failure-text {
-  color: var(--special-red-color);
+  color: var(--dark-red-color);
 }
 
 .unmargined {

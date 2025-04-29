@@ -7,6 +7,7 @@ import Translation from "./Translation.jsx";
 import Scores from "./Scores.jsx";
 import ButtonsBlock from "./ButtonsBlock.jsx";
 import Button from "./Button.jsx";
+import ResultsModal from "./ResultsModal.jsx";
 import Results from "./Results.jsx";
 import wordStock from "../wordStock.js";
 import {
@@ -246,6 +247,15 @@ export default function Game({
 
   return (
     <main className={isDangerStyled ? "game danger" : "game"}>
+      {isGameFinished && (
+        <ResultsModal
+          user={user}
+          totalScore={playerTotalScore}
+          correctNum={correctNum}
+          incorrectNum={incorrectNum}
+          maxCombo={maxCombo}
+        />
+      )}
       {isGameFinished ? (
         <Results
           user={user}

@@ -18,7 +18,6 @@ export default function Timer({
   useEffect(() => {
     intervalRef.current = setInterval(() => {
       if (!isGamePaused) {
-        // console.log(isGamePaused);
         setRemainingTime((prev) => {
           const updated = prev - 1000;
           handleTimeChange(updated);
