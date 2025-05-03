@@ -263,7 +263,17 @@ export default function GameReview({
                 WORD2
               </th>
               <th title="Correct answer">IS CORRECT?</th>
-              <th title="Player answer">ANSWER IS</th>
+              <th
+                title="Player answer"
+                className={
+                  isReversedSort ? "descending-order" : "ascending-order"
+                }
+                onClick={() =>
+                  sortColumn(3, isReversedSort, reviewTable.current)
+                }
+              >
+                ANSWER IS
+              </th>
               <th>+</th>
             </tr>
           </thead>
