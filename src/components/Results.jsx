@@ -1,13 +1,10 @@
-import PopUp from "./PopUp";
 import Button from "./Button";
 import ButtonsBlock from "./ButtonsBlock";
-import Sentence from "./Sentence";
+import PlayerResults from "./PlayerResults";
+import PlayersScores from "./PlayersScores";
+import GameReview from "./GameReview";
 import { setExistingPlayers, getDate, getArrayOfWordsOnly } from "../functions";
-import { useState, useEffect, useRef } from "react";
-
-let initSortState = false;
-let notifWord;
-let notifType;
+import { useEffect } from "react";
 
 export default function Results({
   user,
@@ -20,241 +17,19 @@ export default function Results({
   gameWords,
   incorrectWords,
   wordsNum,
-  currentPlayerIndex,
   handleChangePlayer,
   handleRestartGame,
 }) {
-  const [isPlayersDisplayed, setIsPlayersDisplayed] = useState(false);
-  const [isPopupDisplayed, setIsPopupDisplayed] = useState(false);
-  const [isDictionaryDisplayed, setIsDictionaryDisplayed] = useState(false);
-  const [isLearnedDisplayed, setIsLearnedDisplayed] = useState(true);
-  const [isReversedSort, setIsReversedSort] = useState(initSortState);
-  const [allIncorrectAdded, setAllIncorrectAdded] = useState(false);
-  const [reviewWords, setReviewWords] = useState(gameWords.slice(0, wordsNum));
-  const [dictionary, setDictionary] = useState(
-    [...userDataObj?.dictionary] || []
-  );
 
-  currentPlayerIndex = existingPlayers.findIndex((p) => p.name === user);
   const playedWordsCount = gameWords.slice(0, wordsNum).length;
-  let learnedWordsCount = getLearnedWordsCount();
   const correctWordsCount = playedWordsCount - incorrectWords.length;
   let best = JSON.parse(sessionStorage.getItem("sessionBestScore"));
   setExistingPlayers(1, existingPlayers, user, totalScore);
 
-  const scoresTable = useRef();
-  const reviewTable = useRef();
-  const dictTable = useRef();
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setIsPopupDisplayed(false);
-      return () => clearTimeout(timeout);
-    }, 1000);
-  });
-
-  function getLearnedWordsCount() {
-    let count = 0;
-    const dictionary = userDataObj.dictionary;
-    for (let word of dictionary) if (word.isLearned) count++;
-    return count;
-  }
-
-  function isWordDuplicated(word) {
-    let dictWords = getArrayOfWordsOnly(dictionary);
-    return dictWords.includes(word);
-  }
-
-  function sortColumn(index, reverse, table) {
-    let rows, switching, i, x, y, shouldSwitch;
-    switching = true;
-    while (switching) {
-      switching = false;
-      rows = table.rows;
-      for (i = 1; i < rows.length - 1; i++) {
-        shouldSwitch = false;
-        x = rows[i].getElementsByTagName("td")[index];
-        y = rows[i + 1].getElementsByTagName("td")[index];
-        if (isNaN(x.innerHTML)) {
-          if (!reverse) {
-            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-              shouldSwitch = true;
-              break;
-            }
-          } else {
-            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-              shouldSwitch = true;
-              break;
-            }
-          }
-        } else {
-          if (!reverse) {
-            if (+x.innerHTML > +y.innerHTML) {
-              shouldSwitch = true;
-              break;
-            }
-          } else {
-            if (+x.innerHTML < +y.innerHTML) {
-              shouldSwitch = true;
-              break;
-            }
-          }
-        }
-      }
-
-      if (shouldSwitch) {
-        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-        switching = true;
-      }
-    }
-
-    setIsReversedSort((sort) => !sort);
-  }
-
-  function showMoreScores() {
-    let rows = Array.from(document.querySelectorAll(".scores__table tbody tr"));
-    for (let i = 0; i < 10; i++) {
-      rows[i]?.classList.remove("hidden");
-    }
-    document.querySelector(".scores__table").classList.add("unmargined");
-    setIsPlayersDisplayed(true);
-    console.log("Top 10 players showed");
-  }
-
-  function addWordToDictionary(word, index) {
-    if (isWordDuplicated(word.word1)) {
-      showPopupNotification(word.word1, "duplicate");
-      console.log("Word " + word.word1 + " is duplicated!");
-      return;
-    }
-
-    setReviewWords((prev) => {
-      const leftWords = [...prev];
-      leftWords.splice([index], 1);
-      return leftWords;
-    });
-
-    const newWord = {
-      word1: word.word1,
-      word2: word.word2,
-      translation: word.translation,
-      learned: word.learned,
-      date: getDate(),
-    };
-
-    const updatedDictionary = [...dictionary, newWord];
-    setDictionary(updatedDictionary);
-    userDataObj.dictionary = updatedDictionary;
-    localStorage.setItem(user, JSON.stringify(userDataObj));
-    showPopupNotification(word.word1, "add");
-    console.log("Word added to dictionary");
-  }
-
-  function addIncorrectWordsToDictionary() {
-    let iWords = getArrayOfWordsOnly(incorrectWords);
-    let dWords = getArrayOfWordsOnly(dictionary);
-
-    const currentDictionary = [...dictionary];
-    const newWordsToAdd = [];
-    const updatedReviewWords = [...reviewWords];
-
-    iWords.forEach((iWord) => {
-      if (!dWords.includes(iWord)) {
-        const i = updatedReviewWords.findIndex((w) => w.word1 === iWord);
-        if (i !== -1) {
-          const word = updatedReviewWords[i];
-          const newWord = {
-            word1: word.word1,
-            word2: word.word2,
-            translation: word.translation,
-            learned: word.learned,
-            sentence: "",
-            date: getDate(),
-          };
-
-          newWordsToAdd.push(newWord);
-          updatedReviewWords.splice(i, 1);
-        }
-      } else {
-        console.log("Word " + iWord + " is duplicated!");
-      }
-    });
-
-    const updatedDictionary = [...currentDictionary, ...newWordsToAdd];
-
-    userDataObj.dictionary = updatedDictionary;
-    localStorage.setItem(user, JSON.stringify(userDataObj));
-    setDictionary(updatedDictionary);
-    setReviewWords(updatedReviewWords);
-    setAllIncorrectAdded(true);
-    showPopupNotification("All incorrect words", "add-incorrect");
-    console.log("All incorrect words added to dictionary");
-  }
-
-  function markWordAsLearnt(word, index, isLearned) {
-    const newDictionary = [...dictionary];
-    newDictionary[index].isLearned = !isLearned;
-    setDictionary(newDictionary);
-    userDataObj.dictionary = newDictionary;
-    localStorage.setItem(user, JSON.stringify(userDataObj));
-    showPopupNotification(word.word1, isLearned ? "forget" : "learn");
-    console.log(`Word ${isLearned ? "un" : ""}marked as learned`);
-  }
-
-  function showLearnedWords() {
-    setIsLearnedDisplayed(true);
-    console.log("Learned words are displayed");
-  }
-
-  function hideLearnedWords() {
-    setIsLearnedDisplayed(false);
-    console.log("Learned words are hidden");
-  }
-
-  function removeWordFromDictionary(word, index) {
-    const newDictionary = [...dictionary];
-    newDictionary.splice(index, 1);
-    setDictionary(newDictionary);
-    userDataObj.dictionary = newDictionary;
-    localStorage.setItem(user, JSON.stringify(userDataObj));
-    showPopupNotification(word.word1, "remove");
-    console.log("Word removed from dictionary");
-  }
-
-  function hideDictionary() {
-    setIsDictionaryDisplayed(false);
-  }
-
-  function showDictionary() {
-    setIsDictionaryDisplayed(true);
-  }
-
-  function updateUser(dictionary) {
-    setDictionary(() => {
-      const newDictionary = [...dictionary];
-      return newDictionary;
-    });
-  }
-
-  function incorrectSentenceEntered(word) {
-    showPopupNotification(word, "incorrect-entry");
-  }
-
-  function incorrectLengthUsed(word) {
-    showPopupNotification(word, "incorrect-length");
-  }
-
-  function showPopupNotification(word, type) {
-    notifWord = word;
-    notifType = type;
-    setIsPopupDisplayed(true);
-  }
-
   return (
     <div className="game">
-      {isPopupDisplayed && <PopUp type={notifType} word={notifWord}></PopUp>}
       <p className="timeout">Time is up! Try again.</p>
-      <ButtonsBlock classes={isDictionaryDisplayed ? null : "unmargined"}>
+      <ButtonsBlock classes="unmargined">
         <Button
           text="Change Player"
           classes="failure-button"
@@ -266,7 +41,26 @@ export default function Results({
           onClick={handleRestartGame}
         />
       </ButtonsBlock>
-      <div className="results">
+      <PlayerResults
+        user={user}
+        totalScore={totalScore}
+        correctNum={correctNum}
+        incorrectNum={incorrectNum}
+        maxCombo={maxCombo}
+        best={best}
+      />
+      <PlayersScores user={user} existingPlayers={existingPlayers} />
+      <GameReview
+        user={user}
+        userDataObj={userDataObj}
+        gameWords={gameWords}
+        wordsNum={wordsNum}
+        playedWordsCount={playedWordsCount}
+        correctWordsCount={correctWordsCount}
+        incorrectWords={incorrectWords}
+      />
+
+      {/* <div className="results">
         <h2 className="results__header">Current Player Results</h2>
         <h4>
           Player: <span className="special-text mark-word">{user}</span>
@@ -290,8 +84,8 @@ export default function Results({
             {best.name} - {best.score}
           </span>
         </h4>
-      </div>
-      <div className="scores">
+      </div> */}
+      {/* <div className="scores">
         <h2 className="scores__header">Top Best Scores</h2>
         <table
           ref={scoresTable}
@@ -362,13 +156,13 @@ export default function Results({
           }
           onClick={showMoreScores}
         />
-      </div>
-      <div className="review">
+      </div> */}
+      {/* <div className="review">
         <h2 className="review__header">Review Mentioned Words</h2>
         <p className="special-text black-white">
           Played pair-words count: <mark>{playedWordsCount}</mark>&nbsp;
-          Correct: <mark className="success">{correctWordsCount}</mark>&nbsp; Incorrect:{" "}
-          <mark className="failure">{incorrectWords.length}</mark>
+          Correct: <mark className="success">{correctWordsCount}</mark>&nbsp;
+          Incorrect: <mark className="failure">{incorrectWords.length}</mark>
         </p>
         {reviewWords.length ? (
           <table ref={reviewTable} className="review__table">
@@ -545,14 +339,12 @@ export default function Results({
           </>
         ) : null}
         {!dictionary.length ? (
-          <p className="special-text failure-text">
-            Dictionary is empty!
-          </p>
+          <p className="special-text failure-text">Dictionary is empty!</p>
         ) : null}
         <p className="special-text unmargined">
           Learned words count: <mark>{learnedWordsCount}</mark>
         </p>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useState, createPortal } from "react";
+import { useState } from "react";
 import Description from "./components/Description";
 import Game from "./components/Game";
 

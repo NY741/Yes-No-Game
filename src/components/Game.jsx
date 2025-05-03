@@ -18,8 +18,8 @@ import {
 } from "../functions.js";
 import { useState, useEffect } from "react";
 
-const initTimeMap = [30, 20, 10];
 // const initTimeMap = [60, 45, 30];
+const initTimeMap = [30, 20, 10];
 const words = [...wordStock];
 let mixedWords = mixWords(words);
 let incorrectWords = [];
@@ -57,7 +57,7 @@ export default function Game({
     }, 5000);
   }, [isDangerStyled]);
 
-  let currentPlayerIndex;
+  // let currentPlayerIndex;
   const isNewPlayer = checkNewPlayer();
 
   if (isNewPlayer) {
@@ -209,7 +209,7 @@ export default function Game({
   }
 
   function finishGame() {
-    console.log(currentPlayerIndex);
+    // console.log(currentPlayerIndex);
     updateSessionStorage(user, playerTotalScore);
     updateBestResults(isNewPlayer, user, playerTotalScore);
     setIsGameFinished(true);
@@ -268,7 +268,7 @@ export default function Game({
           incorrectWords={incorrectWords}
           wordsNum={currentNum}
           existingPlayers={existingPlayers}
-          currentPlayerIndex={currentPlayerIndex}
+          // currentPlayerIndex={currentPlayerIndex}
           handleChangePlayer={changePlayer}
           handleRestartGame={restartGame}
         />
