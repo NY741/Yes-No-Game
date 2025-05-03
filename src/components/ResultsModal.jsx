@@ -7,12 +7,6 @@ export default function ResultsModal({ user, totalScore }) {
   const dialog = useRef();
   const result = totalScore > 0 ? true : false;
 
-  //   useEffect(() => {
-  //     if (dialog.current && dialog.current.showModal === "function") {
-  //       dialog.current.showModal();
-  //     }
-  //   }, []);
-
   function handleSubmit() {
     console.log("Worked");
     setIsOpen(false);
