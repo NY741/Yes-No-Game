@@ -1,11 +1,19 @@
-export default function PlayerResults({
-  user,
-  totalScore,
-  correctNum,
-  incorrectNum,
-  maxCombo,
-  best,
-}) {
+import { useContext } from "react";
+import { ResultsContext } from "../store/results-context";
+import { setExistingPlayers } from "../functions";
+
+export default function PlayerResults() {
+  const {
+    user,
+    totalScore,
+    correctNum,
+    incorrectNum,
+    maxCombo,
+    existingPlayers,
+  } = useContext(ResultsContext);
+
+  const best = JSON.parse(sessionStorage.getItem("sessionBestScore"));
+  setExistingPlayers(1, existingPlayers, user, totalScore);
 
   return (
     <div className="results">

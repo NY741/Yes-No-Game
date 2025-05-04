@@ -1,12 +1,13 @@
-import { useState, useRef } from "react";
+import { useState, useContext, useRef } from "react";
+import { ResultsContext } from "../store/results-context";
 import Button from "./Button";
 
 let initSortState = false;
 
-export default function PlayersScores({ user, existingPlayers }) {
+export default function PlayersScores({}) {
   const [isPlayersDisplayed, setIsPlayersDisplayed] = useState(false);
   const [isReversedSort, setIsReversedSort] = useState(initSortState);
-
+  const { user, existingPlayers } = useContext(ResultsContext);
   const scoresTable = useRef();
 
   const currentPlayerIndex = existingPlayers.findIndex((p) => p.name === user);

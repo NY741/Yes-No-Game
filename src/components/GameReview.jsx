@@ -2,22 +2,17 @@ import Sentence from "./Sentence";
 import PopUp from "./PopUp";
 import Button from "./Button";
 import ButtonsBlock from "./ButtonsBlock";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
+import { ResultsContext } from "../store/results-context";
 import { getDate, getArrayOfWordsOnly } from "../functions";
 
 let initSortState = false;
 let notifWord;
 let notifType;
 
-export default function GameReview({
-  user,
-  userDataObj,
-  gameWords,
-  wordsNum,
-  playedWordsCount,
-  correctWordsCount,
-  incorrectWords,
-}) {
+export default function GameReview() {
+  const { user, userDataObj, gameWords, wordsNum, incorrectWords } =
+    useContext(ResultsContext);
   const [isReversedSort, setIsReversedSort] = useState(initSortState);
   const [isPopupDisplayed, setIsPopupDisplayed] = useState(false);
   const [isDictionaryDisplayed, setIsDictionaryDisplayed] = useState(false);
@@ -27,10 +22,11 @@ export default function GameReview({
   const [dictionary, setDictionary] = useState(
     [...userDataObj?.dictionary] || []
   );
-
   const reviewTable = useRef();
   const dictTable = useRef();
 
+  const playedWordsCount = gameWords.slice(0, wordsNum).length;
+  const correctWordsCount = playedWordsCount - incorrectWords.length;
   const learnedWordsCount = getLearnedWordsCount();
 
   useEffect(() => {
@@ -232,8 +228,8 @@ export default function GameReview({
       {isPopupDisplayed && <PopUp type={notifType} word={notifWord}></PopUp>}
       <h2 className="review__header">Review Mentioned Words</h2>
       <p className="special-text black-white">
-        Played pair-words count: <mark>{playedWordsCount}</mark>&nbsp; Correct:{" "}
-        <mark className="success">{correctWordsCount}</mark>&nbsp; Incorrect:{" "}
+        Played pair-words count: <mark>{playedWordsCount}</mark> Correct:{" "}
+        <mark className="success">{correctWordsCount}</mark> Incorrect:{" "}
         <mark className="failure">{incorrectWords.length}</mark>
       </p>
       {reviewWords.length ? (
@@ -418,8 +414,8 @@ export default function GameReview({
         <p className="special-text failure-text">Dictionary is empty!</p>
       ) : null}
       <p className="special-text black-white unmargined">
-        Dictionary words count: <mark>{dictionary.length}</mark>&nbsp; Learned
-        words count: <mark>{learnedWordsCount}</mark>
+        Dictionary words count: <mark>{dictionary.length}</mark> Learned words
+        count: <mark>{learnedWordsCount}</mark>
       </p>
     </div>
   );

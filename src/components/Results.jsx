@@ -3,8 +3,7 @@ import ButtonsBlock from "./ButtonsBlock";
 import PlayerResults from "./PlayerResults";
 import PlayersScores from "./PlayersScores";
 import GameReview from "./GameReview";
-import { setExistingPlayers, getDate, getArrayOfWordsOnly } from "../functions";
-import { useEffect } from "react";
+import { ResultsContext } from "../store/results-context";
 
 export default function Results({
   user,
@@ -20,47 +19,54 @@ export default function Results({
   handleChangePlayer,
   handleRestartGame,
 }) {
-
-  const playedWordsCount = gameWords.slice(0, wordsNum).length;
-  const correctWordsCount = playedWordsCount - incorrectWords.length;
-  let best = JSON.parse(sessionStorage.getItem("sessionBestScore"));
-  setExistingPlayers(1, existingPlayers, user, totalScore);
-
   return (
-    <div className="game">
-      <p className="timeout">Time is up! Try again.</p>
-      <ButtonsBlock classes="unmargined">
-        <Button
-          text="Change Player"
-          classes="failure-button"
-          onClick={handleChangePlayer}
-        />
-        <Button
-          text="Restart Game"
-          classes="success-button"
-          onClick={handleRestartGame}
-        />
-      </ButtonsBlock>
-      <PlayerResults
-        user={user}
-        totalScore={totalScore}
-        correctNum={correctNum}
-        incorrectNum={incorrectNum}
-        maxCombo={maxCombo}
-        best={best}
-      />
-      <PlayersScores user={user} existingPlayers={existingPlayers} />
-      <GameReview
-        user={user}
-        userDataObj={userDataObj}
-        gameWords={gameWords}
-        wordsNum={wordsNum}
-        playedWordsCount={playedWordsCount}
-        correctWordsCount={correctWordsCount}
-        incorrectWords={incorrectWords}
-      />
+    <ResultsContext.Provider
+      value={{
+        user,
+        userDataObj,
+        totalScore,
+        correctNum,
+        incorrectNum,
+        maxCombo,
+        existingPlayers,
+        gameWords,
+        incorrectWords,
+        wordsNum,
+        handleChangePlayer,
+        handleRestartGame,
+      }}
+    >
+      <div className="game">
+        <p className="timeout">Time is up! Try again.</p>
+        <ButtonsBlock classes="unmargined">
+          <Button
+            text="Change Player"
+            classes="failure-button"
+            onClick={handleChangePlayer}
+          />
+          <Button
+            text="Restart Game"
+            classes="success-button"
+            onClick={handleRestartGame}
+          />
+        </ButtonsBlock>
+        <PlayerResults />
+        <PlayersScores />
+        <GameReview />
+      </div>
+    </ResultsContext.Provider>
+  );
+}
 
-      {/* <div className="results">
+// console.log(best);
+// console.log(userDataObj);
+// console.log(incorrectWords);
+// console.log(dictionary);
+// console.log(existingPlayers);
+// console.log(currentPlayerIndex);
+
+{
+  /* <div className="results">
         <h2 className="results__header">Current Player Results</h2>
         <h4>
           Player: <span className="special-text mark-word">{user}</span>
@@ -84,8 +90,10 @@ export default function Results({
             {best.name} - {best.score}
           </span>
         </h4>
-      </div> */}
-      {/* <div className="scores">
+      </div> */
+}
+{
+  /* <div className="scores">
         <h2 className="scores__header">Top Best Scores</h2>
         <table
           ref={scoresTable}
@@ -156,8 +164,10 @@ export default function Results({
           }
           onClick={showMoreScores}
         />
-      </div> */}
-      {/* <div className="review">
+      </div> */
+}
+{
+  /* <div className="review">
         <h2 className="review__header">Review Mentioned Words</h2>
         <p className="special-text black-white">
           Played pair-words count: <mark>{playedWordsCount}</mark>&nbsp;
@@ -344,14 +354,5 @@ export default function Results({
         <p className="special-text unmargined">
           Learned words count: <mark>{learnedWordsCount}</mark>
         </p>
-      </div> */}
-    </div>
-  );
+      </div> */
 }
-
-// console.log(best);
-// console.log(userDataObj);
-// console.log(incorrectWords);
-// console.log(dictionary);
-// console.log(existingPlayers);
-// console.log(currentPlayerIndex);
