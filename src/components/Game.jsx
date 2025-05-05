@@ -180,7 +180,8 @@ export default function Game({
   function changeTime(remainingTime) {
     if (remainingTime >= 0) {
       // check if this demanded !
-      setProgressValue((remainingTime / 1000 / timer) * 100);
+      let value = (remainingTime / 1000 / timer) * 100;
+      setProgressValue(value);
     }
   }
 
@@ -287,6 +288,8 @@ export default function Game({
             handleTimeChange={changeTime}
             handleFinishGame={finishGame}
           />
+          <ProgressBar currValue={progressValue} maxValue={100} />
+
           <Tooltips
             isGamePaused={isGamePaused}
             handleArrowStroke={handleCheckAnswer}
@@ -296,7 +299,6 @@ export default function Game({
             handleShowTranslation={showTranslation}
             handleSkipWord={changeWords}
           />
-          <ProgressBar currValue={progressValue} maxValue={100} />
           <WordsBlock word1={currentWord.word1} word2={currentWord.word2} />
           {isTranslationShowed ? <Translation word={currentWord} /> : null}
           <Scores score={playerTotalScore} />

@@ -174,7 +174,7 @@ p,
   align-items: center;
   gap: 10px;
   padding: 5px;
-  margin-bottom: 20px;
+  margin: 10px 0;
 }
 
 .image-button {
@@ -192,7 +192,7 @@ p,
 
 .left-time-bar {
   display: block;
-  margin: 0 auto 20px;
+  margin: 15px auto;
   width: 190px;
   height: 20px;
   border: 1px solid var(--dark-grey-color);
@@ -439,7 +439,7 @@ th {
   top: 50%;
   left: 50%;
   z-index: 900;
-  width: 50%;
+  width: 60%;
   min-width: 300px;
   height: 240px;
   padding: 2rem;
@@ -492,13 +492,16 @@ th {
   text-align: center;
 }
 
-.scores__table th {
-  cursor: pointer;
-}
-
-.scores__table th:hover {
+/* .scores__table th:hover {
   color: #fff;
   background-color: var(--dark-green-color);
+  cursor: pointer;
+} */
+
+th.ascending-order:hover,
+th.descending-order:hover {
+  background-color: var(--dark-yellow-color);
+  cursor: pointer;
 }
 
 th.ascending-order:hover::before {
@@ -510,7 +513,9 @@ th.descending-order:hover::before {
 }
 
 .current-player {
-  background-color: var(--dark-yellow-color);
+  color: var(--white-color);
+  background-color: var(--dark-green-color);
+  /* background-color: var(--dark-yellow-color); */
   transition: 2s ease-in-out;
 }
 
@@ -598,8 +603,9 @@ th.descending-order:hover::before {
   /* margin-bottom: 0; */
 }
 
-.dictionary tbody tr:nth-of-type(2n) {
-  /* background-color: var(--light-grey-color); */
+.dictionary tbody td:nth-of-type(1),
+.dictionary tbody td:nth-of-type(3) {
+  cursor: auto;
 }
 
 .dictionary td,

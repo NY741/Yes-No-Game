@@ -7,7 +7,6 @@ export default function Timer({
   handleFinishGame,
 }) {
   const [remainingTime, setRemainingTime] = useState(time * 1000);
-  const intervalRef = useRef(null);
 
   // Sync state when 'time' prop changes
   useEffect(() => {
@@ -16,13 +15,13 @@ export default function Timer({
 
   // Start countdown
   useEffect(() => {
-    intervalRef.current = setInterval(() => {
+   const timeout = setInterval(() => {
       if (!isGamePaused) {
         setRemainingTime((prev) => {
           const updated = prev - 1000;
           handleTimeChange(updated);
           if (updated <= 0) {
-            clearInterval(intervalRef.current);
+            clearInterval(timeout);
             handleFinishGame();
             return 0;
           }
@@ -31,7 +30,7 @@ export default function Timer({
       }
     }, 1000);
 
-    return () => clearInterval(intervalRef.current);
+    return () => clearInterval(timeout);
   }, [isGamePaused]);
   // Only once when mounted - not effective now
 

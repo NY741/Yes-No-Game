@@ -1,5 +1,4 @@
-import { createContext, useState } from "react";
-import { setExistingPlayers } from "../functions";
+import { createContext } from "react";
 
 export const ResultsContext = createContext({
   letters: [],
