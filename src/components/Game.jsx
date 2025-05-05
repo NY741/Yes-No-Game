@@ -43,7 +43,6 @@ export default function Game({
   const [blinkKey, setBlinkKey] = useState(0);
   const [direction, setDirection] = useState(null);
   const [leftSeconds, setLeftSeconds] = useState(initTimeMap[level - 1]);
-  const [progressValue, setProgressValue] = useState(100);
   const [isTranslationShowed, setIsTranslationShowed] = useState(false);
   const [isGamePaused, setIsGamePaused] = useState(false);
   const [isGameFinished, setIsGameFinished] = useState(false);
@@ -177,14 +176,6 @@ export default function Game({
     }
   }
 
-  function changeTime(remainingTime) {
-    if (remainingTime >= 0) {
-      // check if this demanded !
-      let value = (remainingTime / 1000 / timer) * 100;
-      setProgressValue(value);
-    }
-  }
-
   function updateBestResults(isNew, user, currentScore) {
     console.log(user, "is", isNew ? "a New Player" : "an Existing Player");
 
@@ -210,7 +201,6 @@ export default function Game({
   }
 
   function finishGame() {
-    // console.log(currentPlayerIndex);
     updateSessionStorage(user, playerTotalScore);
     updateBestResults(isNewPlayer, user, playerTotalScore);
     setIsGameFinished(true);
@@ -235,7 +225,6 @@ export default function Game({
     setDirection(null);
     setCurrentNum(0);
     setLeftSeconds(initTimeMap[level - 1]);
-    setProgressValue(100);
     setIsTranslationShowed(false);
     setIsGamePaused(false);
     setIsGameFinished(false);
@@ -283,12 +272,11 @@ export default function Game({
             />
           )}
           <Timer
+            timer={timer}
             time={leftSeconds}
             isGamePaused={isGamePaused}
-            handleTimeChange={changeTime}
             handleFinishGame={finishGame}
           />
-          <ProgressBar currValue={progressValue} maxValue={100} />
 
           <Tooltips
             isGamePaused={isGamePaused}
